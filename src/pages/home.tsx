@@ -1,15 +1,17 @@
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { PageLayout } from "@/components/layout/page-layout";
+import { AnimatedText } from "@/components/animated-text";
 
 export default function HomePage() {
   return (
     <PageLayout fullWidth>
       {/* Hero Section */}
       <section className="flex flex-col items-center justify-center px-4 py-24 text-center bg-gradient-to-b from-background to-secondary/20">
-        <h1 className="text-4xl sm:text-6xl font-bold tracking-tight">
-          Welcome to <span className="text-primary">AdventureOS</span>
-        </h1>
+        <AnimatedText
+          text="Welcome to AdventureOS"
+          className="text-4xl sm:text-6xl font-bold tracking-tight font-serif italic"
+        />
         <p className="mt-6 text-xl text-muted-foreground max-w-2xl">
           Your gateway to endless adventures. Create, explore, and share
           interactive stories in a revolutionary operating system designed for
@@ -27,9 +29,11 @@ export default function HomePage() {
 
       {/* Features Section */}
       <section className="container mx-auto py-24">
-        <h2 className="text-3xl font-bold text-center mb-12">
-          Why AdventureOS?
-        </h2>
+        <AnimatedText
+          text="Why AdventureOS?"
+          className="text-3xl font-bold text-center mb-12"
+          delay={3}
+        />
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           <FeatureCard
             title="Interactive Stories"
