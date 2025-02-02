@@ -1,14 +1,22 @@
 "use client";
 
-import { Command } from "cmdk";
-import { useEffect, useState } from "react";
+import * as React from "react";
 import { useNavigate } from "react-router-dom";
+import {
+  CommandDialog,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
+import { LaptopIcon, MoonIcon, SunIcon } from "lucide-react";
 
 export function CmdkLauncher() {
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = React.useState(false);
   const navigate = useNavigate();
 
-  useEffect(() => {
+  React.useEffect(() => {
     const down = (e: KeyboardEvent) => {
       if (
         (e.key === "k" && (e.metaKey || e.ctrlKey)) ||
@@ -29,73 +37,63 @@ export function CmdkLauncher() {
   };
 
   return (
-    <Command.Dialog
-      open={open}
-      onOpenChange={setOpen}
-      className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[90vw] max-w-[500px] rounded-lg border shadow-md bg-white dark:bg-gray-800"
-    >
-      <Command.Input
-        placeholder="Type a command or search..."
-        className="w-full px-4 py-3 border-b outline-none"
-      />
+    <CommandDialog open={open} onOpenChange={setOpen} showClose={false}>
+      <CommandInput placeholder="Type a command or search..." />
+      <CommandList>
+        <CommandEmpty>No results found.</CommandEmpty>
 
-      <Command.List className="max-h-[300px] overflow-y-auto p-2">
-        <Command.Empty>No results found.</Command.Empty>
-
-        <Command.Group
-          heading="Navigation"
-          className="px-2 py-1 text-sm text-gray-500"
-        >
-          <Command.Item
-            onSelect={() => runCommand(() => navigate("/about"))}
-            className="px-2 py-1.5 rounded hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer"
-          >
+        <CommandGroup heading="Navigation">
+          <CommandItem onSelect={() => runCommand(() => navigate("/about"))}>
             About Sudeep
-          </Command.Item>
-          <Command.Item
-            onSelect={() => runCommand(() => navigate("/projects"))}
-            className="px-2 py-1.5 rounded hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer"
-          >
+          </CommandItem>
+          <CommandItem onSelect={() => runCommand(() => navigate("/projects"))}>
             Projects
-          </Command.Item>
-          <Command.Item
+          </CommandItem>
+          <CommandItem
             onSelect={() => runCommand(() => navigate("/playground"))}
-            className="px-2 py-1.5 rounded hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer"
           >
             Playground
-          </Command.Item>
-          <Command.Item
-            onSelect={() => runCommand(() => navigate("/work"))}
-            className="px-2 py-1.5 rounded hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer"
-          >
+          </CommandItem>
+          <CommandItem onSelect={() => runCommand(() => navigate("/work"))}>
             Work
-          </Command.Item>
-        </Command.Group>
+          </CommandItem>
+        </CommandGroup>
 
-        <Command.Group
-          heading="Theme"
-          className="px-2 py-1 text-sm text-gray-500"
-        >
-          <Command.Item
+        <CommandGroup heading="Theme">
+          <CommandItem
             onSelect={() =>
               runCommand(() =>
                 document.documentElement.classList.remove("dark")
               )
             }
-            className="px-2 py-1.5 rounded hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer"
           >
+            <SunIcon className="mr-2 h-4 w-4" />
             Light Theme
-          </Command.Item>
-          <Command.Item
+          </CommandItem>
+          <CommandItem
             onSelect={() =>
               runCommand(() => document.documentElement.classList.add("dark"))
             }
-            className="px-2 py-1.5 rounded hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer"
           >
+            <MoonIcon className="mr-2 h-4 w-4" />
             Dark Theme
-          </Command.Item>
-        </Command.Group>
-      </Command.List>
-    </Command.Dialog>
+          </CommandItem>
+          <CommandItem
+            onSelect={() => {
+              runCommand(() => {
+                if (document.documentElement.classList.contains("dark")) {
+                  document.documentElement.classList.remove("dark");
+                } else {
+                  document.documentElement.classList.add("dark");
+                }
+              });
+            }}
+          >
+            <LaptopIcon className="mr-2 h-4 w-4" />
+            System Theme
+          </CommandItem>
+        </CommandGroup>
+      </CommandList>
+    </CommandDialog>
   );
 }
