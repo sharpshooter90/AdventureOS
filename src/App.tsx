@@ -1,17 +1,15 @@
 import "./App.css";
-import { AppRoutes } from "./routes";
 import { ThemeProvider } from "@/components/theme-provider";
+import { AppProvider } from "@/providers/app-provider";
+import { RouterProvider } from "react-router-dom";
+import { router } from "@/routes";
 
-function App() {
-  // Set initial theme
-  const initialTheme = localStorage.getItem("vite-ui-theme") || "dark";
-  document.documentElement.setAttribute("data-theme", initialTheme);
-
+export default function App() {
   return (
     <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
-      <AppRoutes />
+      <AppProvider>
+        <RouterProvider router={router} />
+      </AppProvider>
     </ThemeProvider>
   );
 }
-
-export default App;
