@@ -11,10 +11,12 @@ import {
   CommandList,
 } from "@/components/ui/command";
 import { LaptopIcon, MoonIcon, SunIcon } from "lucide-react";
+import { useTheme } from "@/components/theme-provider";
 
 export function CmdkLauncher() {
   const [open, setOpen] = React.useState(false);
   const navigate = useNavigate();
+  const { setTheme } = useTheme();
 
   React.useEffect(() => {
     const down = (e: KeyboardEvent) => {
@@ -34,6 +36,11 @@ export function CmdkLauncher() {
   const runCommand = (command: () => void) => {
     setOpen(false);
     command();
+  };
+
+  const setThemeAndAttribute = (theme: string) => {
+    setTheme(theme);
+    document.documentElement.setAttribute("data-theme", theme);
   };
 
   return (
@@ -61,33 +68,28 @@ export function CmdkLauncher() {
 
         <CommandGroup heading="Theme">
           <CommandItem
-            onSelect={() =>
-              runCommand(() =>
-                document.documentElement.classList.remove("dark")
-              )
-            }
+            onSelect={() => runCommand(() => setThemeAndAttribute("light"))}
           >
             <SunIcon className="mr-2 h-4 w-4" />
             Light Theme
           </CommandItem>
           <CommandItem
-            onSelect={() =>
-              runCommand(() => document.documentElement.classList.add("dark"))
-            }
+            onSelect={() => runCommand(() => setThemeAndAttribute("dark"))}
           >
             <MoonIcon className="mr-2 h-4 w-4" />
             Dark Theme
           </CommandItem>
           <CommandItem
-            onSelect={() => {
+            onSelect={() =>
               runCommand(() => {
-                if (document.documentElement.classList.contains("dark")) {
-                  document.documentElement.classList.remove("dark");
-                } else {
-                  document.documentElement.classList.add("dark");
-                }
-              });
-            }}
+                const systemTheme = window.matchMedia(
+                  "(prefers-color-scheme: dark)"
+                ).matches
+                  ? "dark"
+                  : "light";
+                setThemeAndAttribute(systemTheme);
+              })
+            }
           >
             <LaptopIcon className="mr-2 h-4 w-4" />
             System Theme
