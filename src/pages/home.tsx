@@ -1,4 +1,4 @@
-import { PageLayout } from "@/components/layout/page-layout";
+import { PageLayout } from "../components/layout/page-layout";
 import { AnimatedText } from "@/components/animated-text";
 import {
   HoverCard,
@@ -12,6 +12,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { ExternalLink } from "lucide-react";
+import { HoverAudioItem } from "@/components/hover-audio-item";
 
 export default function HomePage() {
   return (
@@ -27,9 +28,14 @@ export default function HomePage() {
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger>
-                  <span className="underline decoration-dotted text-gray-800 cursor-help">
-                    others
-                  </span>
+                  <HoverAudioItem
+                    soundUrl="/assets/sounds/explainer-hover.mp3"
+                    className="inline"
+                  >
+                    <span className="underline decoration-dotted text-gray-800 cursor-help">
+                      others
+                    </span>
+                  </HoverAudioItem>
                 </TooltipTrigger>
                 <TooltipContent>
                   <p>actors ie: systems, agents, humans etc</p>
@@ -42,45 +48,62 @@ export default function HomePage() {
             Enjoy building products with{" "}
             <HoverCard>
               <HoverCardTrigger>
-                <span className="underline decoration-dotted text-gray-800 cursor-help">
-                  startups
-                </span>
+                <HoverAudioItem
+                  soundUrl="/assets/sounds/explainer-hover.mp3"
+                  className="inline"
+                >
+                  <span className="underline decoration-dotted text-gray-800 cursor-help">
+                    startups
+                  </span>
+                </HoverAudioItem>
               </HoverCardTrigger>
               <HoverCardContent className="w-120 p-4 space-y-3">
                 <h4 className="font-medium text-sm">Work Experience</h4>
                 <ul className="space-y-2 text-sm text-muted-foreground">
-                  <li className="flex justify-between items-center group border-l-2 border-cyan-500 hover:bg-accent/50 px-2 py-1  transition-colors cursor-pointer">
+                  <HoverAudioItem
+                    soundUrl="/assets/sounds/hover-sound.mp3"
+                    className="flex justify-between items-center group border-l-2 border-cyan-500 hover:bg-accent/50 px-2 py-1 transition-colors cursor-pointer"
+                  >
                     <span>Fractional Designer</span>
                     <div className="flex items-center  pl-2">
                       <div className="w-12 h-[1px] border-b border-dotted border-muted-foreground mx-2 opacity-0 group-hover:opacity-100 transition-opacity" />
                       <span className="text-xs">2022 - Present</span>
                       <ExternalLink className="w-3 h-3 ml-2 opacity-0 group-hover:opacity-100 transition-opacity" />
                     </div>
-                  </li>
-                  <li className="flex justify-between items-center group hover:bg-accent/50 px-2 py-1  transition-colors cursor-pointer">
+                  </HoverAudioItem>
+                  <HoverAudioItem
+                    soundUrl="/assets/sounds/hover-sound.mp3"
+                    className="flex justify-between items-center group hover:bg-accent/50 px-2 py-1 transition-colors cursor-pointer"
+                  >
                     <span>Head of Design at Trinkerr</span>
                     <div className="flex items-center">
                       <div className="w-12 h-[1px] border-b border-dotted border-muted-foreground mx-2 opacity-0 group-hover:opacity-100 transition-opacity" />
                       <span className="text-xs">2019 - 2021</span>
                       <ExternalLink className="w-3 h-3 ml-2 opacity-0 group-hover:opacity-100 transition-opacity" />
                     </div>
-                  </li>
-                  <li className="flex justify-between items-center group hover:bg-accent/50 px-2 py-1  transition-colors cursor-pointer">
+                  </HoverAudioItem>
+                  <HoverAudioItem
+                    soundUrl="/assets/sounds/hover-sound.mp3"
+                    className="flex justify-between items-center group hover:bg-accent/50 px-2 py-1 transition-colors cursor-pointer"
+                  >
                     <span>Sr Product Designer at OSlash</span>
                     <div className="flex items-center">
                       <div className="w-12 h-[1px] border-b border-dotted border-muted-foreground mx-2 opacity-0 group-hover:opacity-100 transition-opacity" />
                       <span className="text-xs">2018 - 2019</span>
                       <ExternalLink className="w-3 h-3 ml-2 opacity-0 group-hover:opacity-100 transition-opacity" />
                     </div>
-                  </li>
-                  <li className="flex justify-between items-center group hover:bg-accent/50 px-2 py-1  transition-colors cursor-pointer">
+                  </HoverAudioItem>
+                  <HoverAudioItem
+                    soundUrl="/assets/sounds/hover-sound.mp3"
+                    className="flex justify-between items-center group hover:bg-accent/50 px-2 py-1 transition-colors cursor-pointer"
+                  >
                     <span>Co-Founder at Sensibull</span>
                     <div className="flex items-center">
                       <div className="w-12 h-[1px] border-b border-dotted border-muted-foreground mx-2 opacity-0 group-hover:opacity-100 transition-opacity" />
                       <span className="text-xs">2016 - 2018</span>
                       <ExternalLink className="w-3 h-3 ml-2 opacity-0 group-hover:opacity-100 transition-opacity" />
                     </div>
-                  </li>
+                  </HoverAudioItem>
                 </ul>
               </HoverCardContent>
             </HoverCard>
@@ -90,14 +113,20 @@ export default function HomePage() {
             Occasionally I drop myself to random parts of the{" "}
             <HoverCard>
               <HoverCardTrigger>
-                <span className="underline decoration-dotted text-gray-800 cursor-help">
+                <HoverAudioItem
+                  soundUrl="/assets/sounds/explainer-hover.mp3"
+                  className="underline decoration-dotted text-gray-800 cursor-help inline"
+                >
                   terrain
-                </span>
+                </HoverAudioItem>
               </HoverCardTrigger>
               <HoverCardContent className="w-120 p-4 space-y-3">
                 <h4 className="font-medium text-sm">Domain Experience</h4>
                 <ul className="space-y-2 text-sm text-muted-foreground">
-                  <li className="flex justify-between items-center group border-l-2 border-cyan-500 hover:bg-accent/50 px-2 py-1 transition-colors cursor-pointer">
+                  <HoverAudioItem
+                    soundUrl="/assets/sounds/hover-sound.mp3"
+                    className="flex justify-between items-center group border-l-2 border-cyan-500 hover:bg-accent/50 px-2 py-1 transition-colors cursor-pointer"
+                  >
                     <div className="flex items-center gap-2">
                       <span>DevTools & Observability</span>
                       <span className="text-xs opacity-0 group-hover:opacity-100 transition-opacity">
@@ -109,16 +138,22 @@ export default function HomePage() {
                       <span className="text-xs">Current</span>
                       <ExternalLink className="w-3 h-3 ml-2 opacity-0 group-hover:opacity-100 transition-opacity" />
                     </div>
-                  </li>
-                  <li className="flex justify-between items-center group hover:bg-accent/50 px-2 py-1 transition-colors cursor-pointer">
+                  </HoverAudioItem>
+                  <HoverAudioItem
+                    soundUrl="/assets/sounds/hover-sound.mp3"
+                    className="flex justify-between items-center group hover:bg-accent/50 px-2 py-1 transition-colors cursor-pointer"
+                  >
                     <span>Fintech Social Trading & Brokers</span>
                     <div className="flex items-center">
                       <div className="w-12 h-[1px] border-b border-dotted border-muted-foreground mx-2 opacity-0 group-hover:opacity-100 transition-opacity" />
                       <span className="text-xs">Previous</span>
                       <ExternalLink className="w-3 h-3 ml-2 opacity-0 group-hover:opacity-100 transition-opacity" />
                     </div>
-                  </li>
-                  <li className="flex justify-between items-center group hover:bg-accent/50 px-2 py-1 transition-colors cursor-pointer">
+                  </HoverAudioItem>
+                  <HoverAudioItem
+                    soundUrl="/assets/sounds/hover-sound.mp3"
+                    className="flex justify-between items-center group hover:bg-accent/50 px-2 py-1 transition-colors cursor-pointer"
+                  >
                     <div className="flex items-center gap-2">
                       <span>Fintech Options Trading</span>
                       <span className="text-xs opacity-0 group-hover:opacity-100 transition-opacity">
@@ -130,7 +165,7 @@ export default function HomePage() {
                       <span className="text-xs">Previous</span>
                       <ExternalLink className="w-3 h-3 ml-2 opacity-0 group-hover:opacity-100 transition-opacity" />
                     </div>
-                  </li>
+                  </HoverAudioItem>
                 </ul>
               </HoverCardContent>
             </HoverCard>{" "}
