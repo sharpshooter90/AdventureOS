@@ -86,8 +86,9 @@ export default {
         "accordion-up": "accordion-up 0.2s ease-out",
       },
       fontFamily: {
-        sans: ["Inter", ...fontFamily.sans], // Inter for body/content
-        serif: ["Lora", ...fontFamily.serif], // Lora for headings
+        sans: ["Primary", "system-ui", "sans-serif"],
+        serif: ["Primary", ...fontFamily.serif],
+        pixel: ["PixelFont", "monospace"],
       },
     },
   },

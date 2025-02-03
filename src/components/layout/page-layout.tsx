@@ -18,7 +18,7 @@ export function PageLayout({
   return (
     <MotionWrapper>
       <main
-        className={`flex min-h-screen flex-col ${
+        className={`flex min-h-screen flex-col w-full max-w-[640px] space-y-4 mx-auto ${
           fullWidth ? "" : "container"
         } ${className}`}
       >

@@ -1,11 +1,11 @@
 import { motion } from "framer-motion";
 import { CmdkLauncher } from "@/components/cmdk-launcher";
-import { NavBar } from "@/components/layout/nav-bar";
+import { NavBar } from "./nav-bar";
 import { Outlet } from "react-router-dom";
 
 export default function RootLayout() {
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen selection:bg-cyan-300 selection:text-gray-800 dark:selection:bg-cyan-600 dark:selection:text-white">
       <NavBar />
       <CmdkLauncher />
       <main className="container mx-auto px-4 py-8">

@@ -1,75 +1,161 @@
-import { Button } from "@/components/ui/button";
-import { Link } from "react-router-dom";
 import { PageLayout } from "@/components/layout/page-layout";
 import { AnimatedText } from "@/components/animated-text";
+import {
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
+} from "@/components/ui/hover-card";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { ExternalLink } from "lucide-react";
+import { RetroCard } from "@/components/ui/retro-card";
 
 export default function HomePage() {
   return (
-    <PageLayout fullWidth>
-      {/* Hero Section */}
-      <section className="flex flex-col items-center justify-center px-4 py-24 text-center bg-gradient-to-b from-background to-secondary/20">
-        <AnimatedText
-          text="Welcome to AdventureOS"
-          className="text-4xl sm:text-6xl font-bold tracking-tight font-serif italic"
-        />
-        <p className="mt-6 text-xl text-muted-foreground max-w-2xl">
-          Your gateway to endless adventures. Create, explore, and share
-          interactive stories in a revolutionary operating system designed for
-          storytellers.
-        </p>
-        <div className="flex gap-4 mt-8">
-          <Button asChild size="lg">
-            <Link to="/get-started">Get Started</Link>
-          </Button>
-          <Button variant="outline" size="lg" asChild>
-            <Link to="/docs">Learn More</Link>
-          </Button>
+    <PageLayout>
+      <div className="flex flex-col items-center min-h-screen px-4 py-16">
+        <div className="max-w-2xl">
+          <AnimatedText
+            text="Welcome!"
+            className="text-4xl font-bold tracking-tight sm:text-5xl mb-6"
+          />
+          <p className="text-lg text-muted-foreground leading-relaxed space-y-2">
+            <span className="block mb-4">
+              Designer, helping{" "}
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger>
+                    <span className="underline decoration-dotted text-gray-800 cursor-help">
+                      others
+                    </span>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>actors ie: systems, agents, humans etc</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>{" "}
+              to get their job done in pixels and code.
+            </span>
+            <span className="block mb-4">
+              Enjoy building products with{" "}
+              <HoverCard>
+                <HoverCardTrigger>
+                  <span className="underline decoration-dotted text-gray-800 cursor-help">
+                    startups
+                  </span>
+                </HoverCardTrigger>
+                <HoverCardContent className="w-120 p-4 space-y-3">
+                  <h4 className="font-medium text-sm">Work Experience</h4>
+                  <ul className="space-y-2 text-sm text-muted-foreground">
+                    <li className="flex justify-between items-center group border-l-2 border-cyan-500 hover:bg-accent/50 px-2 py-1  transition-colors cursor-pointer">
+                      <span>Fractional Designer</span>
+                      <div className="flex items-center  pl-2">
+                        <div className="w-12 h-[1px] border-b border-dotted border-muted-foreground mx-2 opacity-0 group-hover:opacity-100 transition-opacity" />
+                        <span className="text-xs">2022 - Present</span>
+                        <ExternalLink className="w-3 h-3 ml-2 opacity-0 group-hover:opacity-100 transition-opacity" />
+                      </div>
+                    </li>
+                    <li className="flex justify-between items-center group hover:bg-accent/50 px-2 py-1  transition-colors cursor-pointer">
+                      <span>Head of Design at Trinkerr</span>
+                      <div className="flex items-center">
+                        <div className="w-12 h-[1px] border-b border-dotted border-muted-foreground mx-2 opacity-0 group-hover:opacity-100 transition-opacity" />
+                        <span className="text-xs">2019 - 2021</span>
+                        <ExternalLink className="w-3 h-3 ml-2 opacity-0 group-hover:opacity-100 transition-opacity" />
+                      </div>
+                    </li>
+                    <li className="flex justify-between items-center group hover:bg-accent/50 px-2 py-1  transition-colors cursor-pointer">
+                      <span>Sr Product Designer at OSlash</span>
+                      <div className="flex items-center">
+                        <div className="w-12 h-[1px] border-b border-dotted border-muted-foreground mx-2 opacity-0 group-hover:opacity-100 transition-opacity" />
+                        <span className="text-xs">2018 - 2019</span>
+                        <ExternalLink className="w-3 h-3 ml-2 opacity-0 group-hover:opacity-100 transition-opacity" />
+                      </div>
+                    </li>
+                    <li className="flex justify-between items-center group hover:bg-accent/50 px-2 py-1  transition-colors cursor-pointer">
+                      <span>Co-Founder at Sensibull</span>
+                      <div className="flex items-center">
+                        <div className="w-12 h-[1px] border-b border-dotted border-muted-foreground mx-2 opacity-0 group-hover:opacity-100 transition-opacity" />
+                        <span className="text-xs">2016 - 2018</span>
+                        <ExternalLink className="w-3 h-3 ml-2 opacity-0 group-hover:opacity-100 transition-opacity" />
+                      </div>
+                    </li>
+                  </ul>
+                </HoverCardContent>
+              </HoverCard>
+              . Love climbing hills, one at a time.
+            </span>
+            <span className="block">
+              Occasionally I drop myself to random parts of the{" "}
+              <HoverCard>
+                <HoverCardTrigger>
+                  <span className="underline decoration-dotted text-gray-800 cursor-help">
+                    terrain
+                  </span>
+                </HoverCardTrigger>
+                <HoverCardContent className="w-120 p-4 space-y-3">
+                  <h4 className="font-medium text-sm">Domain Experience</h4>
+                  <ul className="space-y-2 text-sm text-muted-foreground">
+                    <li className="flex justify-between items-center group border-l-2 border-cyan-500 hover:bg-accent/50 px-2 py-1 transition-colors cursor-pointer">
+                      <div className="flex items-center gap-2">
+                        <span>DevTools & Observability</span>
+                        <span className="text-xs opacity-0 group-hover:opacity-100 transition-opacity">
+                          🎮 👾 🔭
+                        </span>
+                      </div>
+                      <div className="flex items-center">
+                        <div className="w-12 h-[1px] border-b border-dotted border-muted-foreground mx-2 opacity-0 group-hover:opacity-100 transition-opacity" />
+                        <span className="text-xs">Current</span>
+                        <ExternalLink className="w-3 h-3 ml-2 opacity-0 group-hover:opacity-100 transition-opacity" />
+                      </div>
+                    </li>
+                    <li className="flex justify-between items-center group hover:bg-accent/50 px-2 py-1 transition-colors cursor-pointer">
+                      <span>Fintech Social Trading & Brokers</span>
+                      <div className="flex items-center">
+                        <div className="w-12 h-[1px] border-b border-dotted border-muted-foreground mx-2 opacity-0 group-hover:opacity-100 transition-opacity" />
+                        <span className="text-xs">Previous</span>
+                        <ExternalLink className="w-3 h-3 ml-2 opacity-0 group-hover:opacity-100 transition-opacity" />
+                      </div>
+                    </li>
+                    <li className="flex justify-between items-center group hover:bg-accent/50 px-2 py-1 transition-colors cursor-pointer">
+                      <div className="flex items-center gap-2">
+                        <span>Fintech Options Trading</span>
+                        <span className="text-xs opacity-0 group-hover:opacity-100 transition-opacity">
+                          ♠️ ♣️ α β
+                        </span>
+                      </div>
+                      <div className="flex items-center">
+                        <div className="w-12 h-[1px] border-b border-dotted border-muted-foreground mx-2 opacity-0 group-hover:opacity-100 transition-opacity" />
+                        <span className="text-xs">Previous</span>
+                        <ExternalLink className="w-3 h-3 ml-2 opacity-0 group-hover:opacity-100 transition-opacity" />
+                      </div>
+                    </li>
+                  </ul>
+                </HoverCardContent>
+              </HoverCard>{" "}
+              out of curiosity.
+            </span>
+          </p>
         </div>
-      </section>
-
-      {/* Features Section */}
-      <section className="container mx-auto py-24">
-        <AnimatedText
-          text="Why AdventureOS?"
-          className="text-3xl font-bold text-center mb-12"
-          delay={3}
-        />
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          <FeatureCard
-            title="Interactive Stories"
-            description="Create branching narratives with our intuitive story-building tools"
-            icon="📖"
-          />
-          <FeatureCard
-            title="Rich Media Support"
-            description="Enhance your stories with images, sound, and dynamic elements"
-            icon="🎨"
-          />
-          <FeatureCard
-            title="Community Driven"
-            description="Share your adventures and explore stories from creators worldwide"
-            icon="🌍"
-          />
+        <div className="mt-8">
+          <RetroCard title="Hard Disk" icon="💾">
+            <div className="flex items-center space-x-2">
+              <div className="w-8 h-8 bg-white border border-black flex items-center justify-center">
+                <div className="w-6 h-5 bg-black" />
+              </div>
+              <p className="font-pixel text-xs">Hard Disk</p>
+            </div>
+            <div className="font-pixel text-[10px] leading-tight mt-2">
+              Double-click to
+              <br />
+              open your disk.
+            </div>
+          </RetroCard>
         </div>
-      </section>
+      </div>
     </PageLayout>
-  );
-}
-
-function FeatureCard({
-  title,
-  description,
-  icon,
-}: {
-  title: string;
-  description: string;
-  icon: string;
-}) {
-  return (
-    <div className="p-6 rounded-lg border bg-card text-card-foreground shadow-sm">
-      <div className="text-4xl mb-4">{icon}</div>
-      <h3 className="text-xl font-semibold mb-2">{title}</h3>
-      <p className="text-muted-foreground">{description}</p>
-    </div>
   );
 }

@@ -1,4 +1,13 @@
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Lora:ital,wght@0,400;1,400&display=swap");
+/* Remove or comment out the Google Fonts import */
+/* @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Lora:ital,wght@0,400;1,400&display=swap"); */
+
+@font-face {
+  font-family: "PixelFont";
+  src: url("/fonts/ChicagoKare-Regular.woff2") format("woff2");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
 
 @tailwind base;
 @tailwind components;
@@ -112,7 +121,7 @@ h3,
 h4,
 h5,
 h6 {
-  font-family: "Lora", serif;
+  font-family: "Primary", serif;
 }
 
 /* Remove or comment out these default button styles */
@@ -156,4 +165,8 @@ button:focus-visible {
   body {
     @apply bg-background text-foreground;
   }
+}
+
+.font-pixel {
+  font-family: "PixelFont", monospace;
 }

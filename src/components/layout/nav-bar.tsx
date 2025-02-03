@@ -1,6 +1,8 @@
 import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { LogoExplanation } from "@/components/logo/logo-explanation";
+import { AudioPlayer } from "@/components/audio/audio-player";
 
 const navItems = [
   { path: "/about", label: "About" },
@@ -14,12 +16,10 @@ export function NavBar() {
 
   return (
     <nav className="border-b">
-      <div className="container mx-auto px-4">
-        <div className="flex h-16 items-center justify-between">
+      <div className="flex items-center justify-center px-4">
+        <div className="flex h-16 w-full max-w-[640px] items-center justify-between">
           <div className="flex items-center space-x-4 sm:space-x-8">
-            <Link to="/" className="text-xl font-bold">
-              AdventureOS
-            </Link>
+            <LogoExplanation />
 
             <div className="flex space-x-4 sm:space-x-8">
               {navItems.map((item) => (
@@ -39,7 +39,10 @@ export function NavBar() {
             </div>
           </div>
 
-          <ThemeToggle />
+          <div className="flex items-center gap-2">
+            <AudioPlayer />
+            <ThemeToggle />
+          </div>
         </div>
       </div>
     </nav>
