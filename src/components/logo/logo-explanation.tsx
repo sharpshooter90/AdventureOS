@@ -11,7 +11,7 @@ export function LogoExplanation() {
   return (
     <HoverCard>
       <HoverCardTrigger asChild>
-        <Link to="/" className="text-xl font-bold">
+        <Link to="/" className="text-[32px] font-bold font-pixel">
           A11D
         </Link>
       </HoverCardTrigger>

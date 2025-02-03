@@ -27,7 +27,7 @@ export function NavBar() {
                   key={item.path}
                   to={item.path}
                   className={cn(
-                    "text-sm font-medium transition-colors hover:text-primary",
+                    "text-[24px] font-pixelGeneva9 transition-colors hover:text-primary",
                     location.pathname === item.path
                       ? "text-foreground"
                       : "text-muted-foreground"

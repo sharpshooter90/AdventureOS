@@ -89,6 +89,7 @@ export default {
         sans: ["Primary", "system-ui", "sans-serif"],
         serif: ["Primary", ...fontFamily.serif],
         pixel: ["PixelFont", "monospace"],
+        pixelGeneva9: ["PixelGeneva9", "monospace"],
       },
     },
   },
