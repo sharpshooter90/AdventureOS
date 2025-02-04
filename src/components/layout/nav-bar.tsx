@@ -23,16 +23,21 @@ export function NavBar() {
 
             <div className="flex space-x-4 sm:space-x-8">
               {navItems.map((item) => (
-                <HoverAudioItem soundUrl="/assets/sounds/explainer-hover.mp3">
+                <HoverAudioItem
+                  key={item.path}
+                  soundUrl="/assets/sounds/explainer-hover.mp3"
+                >
                   <Link
-                    key={item.path}
                     to={item.path}
                     className={cn(
-                      "text-[24px] font-pixelGeneva9 transition-colors hover:text-primary",
+                      "text-[24px] font-pixelGeneva9 transition-colors hover:text-primary hover:animate-glitch relative",
                       location.pathname === item.path
                         ? "text-foreground"
-                        : "text-muted-foreground"
+                        : "text-muted-foreground",
+                      "before:absolute before:content-[attr(data-text)] before:left-0 before:text-primary before:opacity-0 hover:before:opacity-[0.1] before:w-full before:h-full before:-translate-x-[2px]",
+                      "after:absolute after:content-[attr(data-text)] after:left-0 after:text-primary after:opacity-0 hover:after:opacity-[0.1] after:w-full after:h-full after:translate-x-[2px]"
                     )}
+                    data-text={item.label}
                   >
                     {item.label}
                   </Link>

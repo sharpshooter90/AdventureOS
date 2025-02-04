@@ -10,7 +10,7 @@ export const characters: Character[] = [
     id: "rick",
     icon: "🧪",
     name: "Rick",
-    audioSrc: "/assets/audio/rick.mp3",
+    audioSrc: "/assets/audio/Rick.mp3",
   },
   // {
   //   id: "morty",

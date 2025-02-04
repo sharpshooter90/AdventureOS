@@ -17,6 +17,14 @@
   font-display: swap;
 }
 
+@font-face {
+  font-family: "PixelArial";
+  src: url("/fonts/PIXEARG_.TTF") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -181,6 +189,10 @@ button:focus-visible {
 
 .font-pixelGeneva9 {
   font-family: "PixelGeneva9", monospace;
+}
+
+.font-pixelArial {
+  font-family: "PixelArial", monospace;
 }
 
 /* Add this new CSS for the dotted grid pattern */

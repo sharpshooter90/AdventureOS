@@ -27,7 +27,7 @@ export function LogoExplanation() {
                 <AudioPlayer />
               </div>
             </div>
-            <div className="font-pixel leading-tight">
+            <div className="font-pixelArial leading-tight text-xs">
               <p>A numeronym where:</p>
               <p className="mt-1">
                 a<span className="text-cyan-600">&lt;11 characters&gt;</span>d
