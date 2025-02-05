@@ -3,7 +3,11 @@ const { fontFamily } = require("tailwindcss/defaultTheme");
 
 export default {
   darkMode: ["class"],
-  content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
+  content: [
+    "./index.html",
+    "./src/**/*.{js,ts,jsx,tsx}",
+    "./src/components/boot/**/*.{js,ts,jsx,tsx}",
+  ],
   theme: {
     extend: {
       borderRadius: {
@@ -97,6 +101,7 @@ export default {
         "accordion-up": "accordion-up 0.2s ease-out",
         flicker: "flicker 0.15s ease-in-out infinite",
         glitch: "glitch 0.2s linear infinite",
+        pulse: "pulse 1s cubic-bezier(0.4, 0, 0.6, 1) infinite",
       },
       fontFamily: {
         sans: ["Primary", "system-ui", "sans-serif"],
@@ -107,5 +112,5 @@ export default {
       },
     },
   },
-  plugins: [require("tailwindcss-animate")],
+  plugins: [require("tailwindcss-animate"), require("tailwind-scrollbar-hide")],
 };
