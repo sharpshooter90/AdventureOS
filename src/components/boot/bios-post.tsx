@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import { playSound } from "@/utils/sound-utils";
 
 // Add loading spinners array
 const loadingSpinners = ["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"];
@@ -226,7 +227,7 @@ export default function DesignerBiosPost() {
     <div className="bg-black min-h-screen">
       <div
         ref={scrollRef}
-        className={`font-mono text-green-400 text-sm leading-tight p-4 h-screen ${scrollbarHideClass}`}
+        className={`font-pixel text-green-400 text-sm leading-tight p-4 h-screen ${scrollbarHideClass}`}
       >
         {biosLines.slice(0, currentLine + 1).map(renderLine)}
         {showProjects && (
@@ -261,16 +262,34 @@ export function BiosPost({ onComplete }: BiosPostProps) {
   useEffect(() => {
     const timer = setInterval(() => {
       if (currentLine < biosLines.length - 1) {
-        setCurrentLine((prev) => prev + 1);
+        setCurrentLine((prev) => {
+          // Play explainer hover sound for section headers
+          if (biosLines[prev + 1].startsWith("===")) {
+            playSound("explainerHover");
+          } else {
+            playSound("keyPress");
+          }
+          return prev + 1;
+        });
       } else if (!showProjects) {
+        playSound("success");
         setShowProjects(true);
       } else if (projectLine < projectDevices.length - 1) {
-        setProjectLine((prev) => prev + 1);
+        setProjectLine((prev) => {
+          // Play explainer hover sound for project section headers
+          if (projectDevices[prev + 1].startsWith("===")) {
+            playSound("explainerHover");
+          } else {
+            playSound("keyPress");
+          }
+          return prev + 1;
+        });
       } else {
         clearInterval(timer);
+        playSound("boot");
         setTimeout(onComplete, 1000);
       }
-    }, 10);
+    }, 30);
 
     return () => clearInterval(timer);
   }, [currentLine, showProjects, projectLine, onComplete]);
@@ -348,7 +367,7 @@ export function BiosPost({ onComplete }: BiosPostProps) {
     <div className="bg-black min-h-screen">
       <div
         ref={scrollRef}
-        className={`font-mono text-green-400 text-sm leading-tight p-4 h-screen ${scrollbarHideClass}`}
+        className={`font-pixel text-green-400 text-sm leading-tight p-4 h-screen ${scrollbarHideClass}`}
       >
         {biosLines.slice(0, currentLine + 1).map(renderLine)}
         {showProjects && (

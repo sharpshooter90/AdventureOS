@@ -30,7 +30,7 @@
 @tailwind utilities;
 
 :root {
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-family: "PixelFont", monospace;
   line-height: 1.5;
   font-weight: 400;
 
@@ -128,7 +128,7 @@ body {
   place-items: center;
   min-width: 320px;
   min-height: 100vh;
-  font-family: "Inter", sans-serif;
+  font-family: "PixelFont", monospace;
 }
 
 h1,
@@ -137,7 +137,7 @@ h3,
 h4,
 h5,
 h6 {
-  font-family: "Primary", serif;
+  font-family: "PixelFont", monospace;
 }
 
 /* Remove or comment out these default button styles */
@@ -179,7 +179,7 @@ button:focus-visible {
     @apply border-border;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground font-pixel;
   }
 }
 

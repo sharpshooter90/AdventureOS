@@ -57,7 +57,7 @@ export function AppLoader() {
               ease: "easeInOut",
             },
           }}
-          className="fixed inset-0 z-50 flex items-center justify-center bg-background font-mono"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-background font-pixel"
         >
           <div className="flex flex-col items-center gap-6">
             <motion.p

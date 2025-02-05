@@ -29,7 +29,7 @@ export function TerminalLoader({ stage }: TerminalLoaderProps) {
   }, [currentIndex]);
 
   return (
-    <div className="bg-black min-h-screen text-green-500 p-4 font-mono">
+    <div className="bg-black min-h-screen text-green-500 p-4 font-pixel">
       <div className="max-w-2xl mx-auto">
         {messages.map((message, index) => (
           <div key={index} className="mb-2">

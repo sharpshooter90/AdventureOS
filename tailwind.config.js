@@ -104,7 +104,7 @@ export default {
         pulse: "pulse 1s cubic-bezier(0.4, 0, 0.6, 1) infinite",
       },
       fontFamily: {
-        sans: ["Primary", "system-ui", "sans-serif"],
+        sans: ["PixelFont", "system-ui", "sans-serif"],
         serif: ["Primary", ...fontFamily.serif],
         pixel: ["PixelFont", "monospace"],
         pixelGeneva9: ["PixelGeneva9", "monospace"],
