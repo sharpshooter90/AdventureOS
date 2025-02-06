@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { playSound, stopSound } from "@/utils/sound-utils";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 
 const kernelVersions = [
   {
@@ -39,22 +39,71 @@ interface OSSelectorProps {
 export function OSSelector({ onSelect }: OSSelectorProps) {
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [isBooting, setIsBooting] = useState(false);
-  const [isOn, setIsOn] = useState(false);
+  const [isVisible, setIsVisible] = useState(false);
 
-  // CRT animation variants
-  const crtVariants = {
-    off: {
-      scaleX: 0,
-      scaleY: 0.01,
+  // Enhanced sci-fi reveal animation variants
+  const containerVariants = {
+    hidden: {
+      scale: 0,
       opacity: 0,
     },
-    on: {
-      scaleX: 1,
-      scaleY: 1,
+    visible: {
+      scale: 1,
       opacity: 1,
       transition: {
         duration: 0.5,
-        ease: [0.34, 1.56, 0.64, 1], // Custom spring-like easing
+        ease: [0.43, 0.13, 0.23, 0.96],
+        staggerChildren: 0.1,
+      },
+    },
+    exit: {
+      scale: 0,
+      opacity: 0,
+      transition: {
+        duration: 0.3,
+      },
+    },
+  };
+
+  const frameVariants = {
+    hidden: {
+      opacity: 0,
+      scale: 0.8,
+    },
+    visible: {
+      opacity: 1,
+      scale: 1,
+      transition: {
+        duration: 0.3,
+        delay: 0.2,
+      },
+    },
+  };
+
+  const contentVariants = {
+    hidden: {
+      opacity: 0,
+      y: 20,
+    },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        duration: 0.4,
+        delay: 0.5,
+        ease: "easeOut",
+      },
+    },
+  };
+
+  // Scan line effect variants
+  const scanLineVariants = {
+    hidden: { scaleY: 0 },
+    visible: {
+      scaleY: 1,
+      transition: {
+        duration: 0.3,
+        delay: 0.4,
       },
     },
   };
@@ -62,12 +111,13 @@ export function OSSelector({ onSelect }: OSSelectorProps) {
   // Turn on effect
   useEffect(() => {
     const timer = setTimeout(() => {
-      setIsOn(true);
+      setIsVisible(true);
       playSound("powerOn");
       playSound("hum");
     }, 500);
 
     return () => {
+      clearTimeout(timer);
       stopSound("hum");
     };
   }, []);
@@ -102,45 +152,100 @@ export function OSSelector({ onSelect }: OSSelectorProps) {
 
   return (
     <div className="min-h-screen bg-black flex items-center justify-center p-4 font-pixel">
-      <motion.div
-        className="w-full max-w-3xl"
-        variants={crtVariants}
-        initial="off"
-        animate={isOn ? "on" : "off"}
-      >
-        <div className="border border-white rounded">
-          <div className="p-4 text-white space-y-0.5">
-            <div className="mb-4">GRUB Loading stage2..</div>
+      <AnimatePresence>
+        {isVisible && (
+          <motion.div
+            className="w-full max-w-3xl relative"
+            variants={containerVariants}
+            initial="hidden"
+            animate="visible"
+            exit="exit"
+          >
+            {/* Frame with glow effect */}
+            <motion.div
+              variants={frameVariants}
+              className="absolute inset-0 border-2 border-cyan-500/30 rounded-lg"
+              style={{
+                boxShadow: "0 0 20px rgba(6, 182, 212, 0.3)",
+                transform: "scale(1.02)",
+              }}
+            />
 
-            {kernelVersions.map((version, index) => (
-              <div
-                key={index}
-                className={`pl-2 ${
-                  selectedIndex === index ? "bg-white text-black" : ""
-                }`}
+            {/* Main content container */}
+            <motion.div
+              className="border border-white/70 rounded-lg bg-black/95 backdrop-blur-sm overflow-hidden relative"
+              variants={frameVariants}
+            >
+              {/* Scan line effect */}
+              <motion.div
+                className="absolute inset-0 bg-gradient-to-b from-cyan-500/10 to-transparent pointer-events-none"
+                variants={scanLineVariants}
+                style={{ backgroundSize: "100% 3px" }}
+              />
+
+              {/* Content */}
+              <motion.div
+                className="p-4 text-white space-y-0.5 relative z-10"
+                variants={contentVariants}
               >
-                {version.name}
-              </div>
-            ))}
+                <div className="mb-4 text-cyan-400">GRUB Loading stage2..</div>
 
-            {isBooting && (
-              <div className="mt-4 text-green-500">
-                Booting {kernelVersions[selectedIndex].name}...
-              </div>
-            )}
+                {kernelVersions.map((version, index) => (
+                  <motion.div
+                    key={index}
+                    className={`pl-2 ${
+                      selectedIndex === index
+                        ? "bg-cyan-500/20 text-cyan-300 border-l-2 border-cyan-500"
+                        : ""
+                    }`}
+                    variants={{
+                      hidden: { x: -20, opacity: 0 },
+                      visible: {
+                        x: 0,
+                        opacity: 1,
+                        transition: { delay: 0.6 + index * 0.1 },
+                      },
+                    }}
+                  >
+                    {version.name}
+                  </motion.div>
+                ))}
 
-            {/* Empty space */}
-            <div className="h-32" />
+                {isBooting && (
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    className="mt-4 text-cyan-500"
+                  >
+                    Booting {kernelVersions[selectedIndex].name}...
+                  </motion.div>
+                )}
 
-            {/* Instructions */}
-            <div className="text-sm space-y-1 text-gray-400">
-              <p>Use the ↑ and ↓ keys to select which entry is highlighted.</p>
-              <p>Press enter to boot the selected OS.</p>
-              <p>The selected OS will boot automatically in 30 seconds.</p>
-            </div>
-          </div>
-        </div>
-      </motion.div>
+                <div className="h-32" />
+
+                {/* Instructions */}
+                <motion.div
+                  className="text-sm space-y-1 text-cyan-300/70"
+                  variants={{
+                    hidden: { opacity: 0, y: 20 },
+                    visible: {
+                      opacity: 1,
+                      y: 0,
+                      transition: { delay: 1 },
+                    },
+                  }}
+                >
+                  <p>
+                    Use the ↑ and ↓ keys to select which entry is highlighted.
+                  </p>
+                  <p>Press enter to boot the selected OS.</p>
+                  <p>The selected OS will boot automatically in 30 seconds.</p>
+                </motion.div>
+              </motion.div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
