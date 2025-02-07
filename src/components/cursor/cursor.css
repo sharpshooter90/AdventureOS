@@ -1,0 +1,92 @@
+body {
+  cursor: none;
+}
+
+.custom-cursor {
+  width: 6px;
+  height: 6px;
+  background-color: white;
+  position: fixed;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  z-index: 9999;
+  transition: width 0.1s ease, height 0.1s ease, background-color 0.1s ease;
+  mix-blend-mode: difference;
+  will-change: transform;
+}
+
+.custom-cursor.hover {
+  width: 8px;
+  height: 8px;
+  background-color: #000080;
+  border: 1px solid white;
+  mix-blend-mode: normal;
+}
+
+.custom-cursor.clicking {
+  width: 10px;
+  height: 10px;
+  background-color: #800080;
+}
+
+.custom-cursor.text {
+  width: 2px;
+  height: 16px;
+}
+
+.custom-cursor.ew-resize {
+  width: 16px;
+  height: 6px;
+  background-color: white;
+  position: relative;
+}
+
+.custom-cursor.ew-resize::before,
+.custom-cursor.ew-resize::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  width: 0;
+  height: 0;
+  border-top: 3px solid transparent;
+  border-bottom: 3px solid transparent;
+}
+
+.custom-cursor.ew-resize::before {
+  left: -2px;
+  border-right: 4px solid white;
+}
+
+.custom-cursor.ew-resize::after {
+  right: -2px;
+  border-left: 4px solid white;
+}
+
+.custom-cursor.ns-resize {
+  width: 6px;
+  height: 16px;
+  background-color: white;
+  position: relative;
+}
+
+.custom-cursor.ns-resize::before,
+.custom-cursor.ns-resize::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  width: 0;
+  height: 0;
+  border-left: 3px solid transparent;
+  border-right: 3px solid transparent;
+}
+
+.custom-cursor.ns-resize::before {
+  top: -2px;
+  border-bottom: 4px solid white;
+}
+
+.custom-cursor.ns-resize::after {
+  bottom: -2px;
+  border-top: 4px solid white;
+}
