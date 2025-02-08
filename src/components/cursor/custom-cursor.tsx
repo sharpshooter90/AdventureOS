@@ -26,7 +26,9 @@ const CustomCursor: React.FC<CustomCursorProps> = React.memo(
       if (previousTimeRef.current !== undefined) {
         const { x, y } = positionRef.current;
         if (cursorRef.current) {
-          cursorRef.current.style.transform = `translate3d(${x}px, ${y}px, 0)`;
+          cursorRef.current.style.transform = `translate3d(${x - 3}px, ${
+            y - 3
+          }px, 0)`;
         }
       }
       previousTimeRef.current = time;

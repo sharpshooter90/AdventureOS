@@ -11,9 +11,13 @@ body {
   left: 0;
   pointer-events: none;
   z-index: 9999;
+  transform: translate3d(0, 0, 0);
+  backface-visibility: hidden;
+  perspective: 1000;
+  transform-style: preserve-3d;
   transition: width 0.1s ease, height 0.1s ease, background-color 0.1s ease;
   mix-blend-mode: difference;
-  will-change: transform;
+  will-change: transform, width, height, background-color;
 }
 
 .custom-cursor.hover {
@@ -22,17 +26,20 @@ body {
   background-color: #000080;
   border: 1px solid white;
   mix-blend-mode: normal;
+  will-change: transform, width, height, background-color;
 }
 
 .custom-cursor.clicking {
   width: 10px;
   height: 10px;
   background-color: #800080;
+  will-change: transform, width, height, background-color;
 }
 
 .custom-cursor.text {
   width: 2px;
   height: 16px;
+  will-change: transform, width, height, background-color;
 }
 
 .custom-cursor.ew-resize {
@@ -40,6 +47,7 @@ body {
   height: 6px;
   background-color: white;
   position: relative;
+  will-change: transform, width, height, background-color;
 }
 
 .custom-cursor.ew-resize::before,
@@ -68,6 +76,7 @@ body {
   height: 16px;
   background-color: white;
   position: relative;
+  will-change: transform, width, height, background-color;
 }
 
 .custom-cursor.ns-resize::before,
