@@ -1,11 +1,18 @@
 import { createContext, useContext, useReducer, ReactNode } from "react";
 import { RetroWindow } from "./retro-window";
 import { Taskbar } from "./taskbar";
+import {
+  ApplicationType,
+  ApplicationMap,
+  getApplicationForFile,
+} from "../../types/applications";
+import { AppWrapper, formatWindowTitle } from "../applications/app-wrapper";
 
 type WindowState = {
   id: string;
   title: string;
-  content: ReactNode;
+  appType: ApplicationType;
+  content: any;
   isMinimized: boolean;
   isMaximized: boolean;
   position?: { x: number; y: number };
@@ -23,7 +30,12 @@ type WindowManagerState = {
 type WindowManagerAction =
   | {
       type: "OPEN_WINDOW";
-      payload: { id: string; title: string; content: ReactNode };
+      payload: {
+        id: string;
+        title: string;
+        appType: ApplicationType;
+        content: any;
+      };
     }
   | { type: "CLOSE_WINDOW"; payload: { id: string } }
   | { type: "MINIMIZE_WINDOW"; payload: { id: string } }
@@ -52,7 +64,7 @@ function windowManagerReducer(
 ): WindowManagerState {
   switch (action.type) {
     case "OPEN_WINDOW": {
-      // Calculate new position based on last active window
+      const appInfo = ApplicationMap[action.payload.appType];
       const newPosition = {
         x: state.lastPosition.x + 30,
         y: state.lastPosition.y + 30,
@@ -73,10 +85,12 @@ function windowManagerReducer(
           [action.payload.id]: {
             id: action.payload.id,
             title: action.payload.title,
+            appType: action.payload.appType,
             content: action.payload.content,
             isMinimized: false,
             isMaximized: false,
             position: newPosition,
+            size: appInfo.defaultSize,
             zIndex: state.highestZIndex + 1,
           },
         },
@@ -200,7 +214,17 @@ export function WindowManagerProvider({ children }: { children: ReactNode }) {
         {Object.values(state.windows).map((window) => (
           <RetroWindow
             key={window.id}
-            window={window}
+            window={{
+              ...window,
+              title: formatWindowTitle(window.appType, window.title),
+              content: (
+                <AppWrapper
+                  appType={window.appType}
+                  title={window.title}
+                  content={window.content}
+                />
+              ),
+            }}
             isActive={state.activeWindowId === window.id}
           />
         ))}

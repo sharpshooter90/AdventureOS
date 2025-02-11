@@ -2,7 +2,6 @@ import { useState, useRef, useEffect } from "react";
 import { useWindowManager } from "./window-manager";
 import { soundManager } from "../dialog/sound-manager";
 import "./window.css";
-import { IconView, ListView } from "./window-views";
 
 interface RetroWindowProps {
   window: {
@@ -14,15 +13,6 @@ interface RetroWindowProps {
     position?: { x: number; y: number };
     size?: { width: number; height: number };
     zIndex: number;
-    viewMode?: "list" | "icons";
-    items?: Array<{
-      id: string;
-      name: string;
-      icon?: string;
-      type: string;
-      size?: string;
-      modified?: string;
-    }>;
   };
   isActive: boolean;
   onResize?: (width: number, height: number) => void;
@@ -37,9 +27,6 @@ export function RetroWindow({ window, isActive, onResize }: RetroWindowProps) {
   const [resizeEdge, setResizeEdge] = useState<string | null>(null);
   const [initialSize, setInitialSize] = useState({ width: 0, height: 0 });
   const [initialPosition, setInitialPosition] = useState({ x: 0, y: 0 });
-  const [viewMode, setViewMode] = useState<"list" | "icons">(
-    window.viewMode || "icons"
-  );
 
   const handleMouseDown = (e: React.MouseEvent) => {
     if (!window.isMaximized) {
@@ -186,24 +173,6 @@ export function RetroWindow({ window, isActive, onResize }: RetroWindowProps) {
     cursor: isResizing ? `${resizeEdge}-resize` : "default",
   };
 
-  // Determine content type based on window ID
-  const getContentClass = () => {
-    if (window.id.startsWith("folder-")) {
-      return "window-content-folder";
-    }
-    if (window.id.endsWith(".md") || window.id.endsWith(".txt")) {
-      return "window-content-text";
-    }
-    if (
-      window.id.endsWith(".png") ||
-      window.id.endsWith(".jpg") ||
-      window.id.endsWith(".gif")
-    ) {
-      return "window-content-image";
-    }
-    return "window-content-default";
-  };
-
   return (
     <div
       ref={windowRef}
@@ -268,24 +237,8 @@ export function RetroWindow({ window, isActive, onResize }: RetroWindowProps) {
           </div>
         </div>
 
-        {/* Add view toggle buttons in the toolbar */}
-        <div className="window-toolbar">
-          <button
-            className={`toolbar-button ${viewMode === "icons" ? "active" : ""}`}
-            onClick={() => setViewMode("icons")}
-          >
-            Icons
-          </button>
-          <button
-            className={`toolbar-button ${viewMode === "list" ? "active" : ""}`}
-            onClick={() => setViewMode("list")}
-          >
-            List
-          </button>
-        </div>
-
         {/* Window Content */}
-        <div className={`window-content ${getContentClass()}`}>
+        <div className="flex-1 bg-white text-black overflow-auto">
           {window.content}
         </div>
 
