@@ -6,10 +6,12 @@
 
 .window-enter {
   animation: window-enter 0.3s ease-out;
+  transform-origin: top left;
 }
 
 .window-exit {
   animation: window-exit 0.3s ease-in;
+  transform-origin: top left;
 }
 
 .dialog-header {
@@ -43,22 +45,74 @@
 }
 
 .window-content {
-  @apply p-4 flex-1 overflow-auto bg-white/90 text-black;
+  @apply flex-1 overflow-auto bg-white text-black relative;
+  min-height: 100px;
 }
 
-.window-content h1,
-.window-content h2,
-.window-content h3,
-.window-content h4 {
-  @apply font-pixel;
+/* Content type specific styles */
+.window-content-folder {
+  @apply p-4 grid grid-cols-[repeat(auto-fill,minmax(100px,1fr))] gap-4;
 }
 
-.window-content p {
-  @apply mb-4;
+.window-content-text {
+  @apply p-4 font-mono whitespace-pre-wrap;
 }
 
-.window-content a {
-  @apply text-blue-600 hover:underline;
+.window-content-image {
+  @apply flex items-center justify-center;
+}
+
+.window-content-image img {
+  @apply max-w-full max-h-full object-contain;
+}
+
+/* Icon and List view styles */
+.icon-view {
+  @apply grid grid-cols-[repeat(auto-fill,minmax(80px,1fr))] gap-4 p-4;
+}
+
+.icon-item {
+  @apply flex flex-col items-center gap-1 p-2 cursor-pointer hover:bg-blue-100 rounded;
+}
+
+.icon-wrapper {
+  @apply w-12 h-12 flex items-center justify-center;
+}
+
+.icon {
+  @apply w-full h-full object-contain;
+}
+
+.default-icon {
+  @apply w-full h-full bg-gray-200 flex items-center justify-center text-gray-600 font-bold rounded;
+}
+
+.icon-label {
+  @apply text-center text-sm truncate w-full;
+}
+
+.list-view {
+  @apply w-full;
+}
+
+.list-header {
+  @apply grid grid-cols-[2fr,1fr,1fr,1fr] gap-2 px-4 py-2 bg-gray-100 font-bold text-sm border-b border-gray-200;
+}
+
+.list-item {
+  @apply grid grid-cols-[2fr,1fr,1fr,1fr] gap-2 px-4 py-2 hover:bg-blue-50 cursor-pointer border-b border-gray-100;
+}
+
+.name-col {
+  @apply flex items-center gap-2;
+}
+
+.icon-small {
+  @apply w-4 h-4 flex items-center justify-center;
+}
+
+.default-icon-small {
+  @apply w-full h-full bg-gray-200 flex items-center justify-center text-gray-600 text-xs rounded;
 }
 
 .retro-window {
@@ -147,54 +201,4 @@
 
 .toolbar-button.active {
   @apply bg-blue-600 text-white;
-}
-
-/* Icon View */
-.icon-view {
-  @apply grid grid-cols-[repeat(auto-fill,minmax(80px,1fr))] gap-4 p-4;
-}
-
-.icon-item {
-  @apply flex flex-col items-center gap-1 p-2 cursor-pointer hover:bg-blue-100 rounded;
-}
-
-.icon-wrapper {
-  @apply w-12 h-12 flex items-center justify-center;
-}
-
-.icon {
-  @apply w-full h-full object-contain;
-}
-
-.default-icon {
-  @apply w-full h-full bg-gray-200 flex items-center justify-center text-gray-600 font-bold rounded;
-}
-
-.icon-label {
-  @apply text-center text-sm truncate w-full;
-}
-
-/* List View */
-.list-view {
-  @apply w-full;
-}
-
-.list-header {
-  @apply grid grid-cols-[2fr,1fr,1fr,1fr] gap-2 px-4 py-2 bg-gray-100 font-bold text-sm border-b border-gray-200;
-}
-
-.list-item {
-  @apply grid grid-cols-[2fr,1fr,1fr,1fr] gap-2 px-4 py-2 hover:bg-blue-50 cursor-pointer border-b border-gray-100;
-}
-
-.name-col {
-  @apply flex items-center gap-2;
-}
-
-.icon-small {
-  @apply w-4 h-4 flex items-center justify-center;
-}
-
-.default-icon-small {
-  @apply w-full h-full bg-gray-200 flex items-center justify-center text-gray-600 text-xs rounded;
 }

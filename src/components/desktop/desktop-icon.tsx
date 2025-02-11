@@ -20,10 +20,12 @@ interface Position {
 
 interface DesktopIconProps {
   id: string;
-  name: string;
+  label: string;
   type: "folder" | "file" | "text" | "image" | "computer" | "recyclebin";
-  position?: { x: number; y: number };
+  defaultPosition?: { x: number; y: number };
   onDoubleClick?: () => void;
+  onPositionChange?: (position: { x: number; y: number }) => void;
+  icon?: React.ElementType | string;
 }
 
 const IconComponent = {
@@ -37,10 +39,12 @@ const IconComponent = {
 
 export function DesktopIcon({
   id,
-  name,
+  label,
   type,
-  position,
+  defaultPosition,
   onDoubleClick,
+  onPositionChange,
+  icon,
 }: DesktopIconProps) {
   const iconRef = useRef<HTMLDivElement>(null);
   const [isSelected, setIsSelected] = useState(false);
@@ -106,12 +110,16 @@ export function DesktopIcon({
     if (e.type === "mouseup") {
       (e as React.MouseEvent).stopPropagation();
     }
+
+    if (onPositionChange) {
+      onPositionChange(position);
+    }
   };
 
   // Handle clicking outside to deselect
   const handleWindowClick = (e: MouseEvent) => {
     const target = e.target as HTMLElement;
-    if (!target.closest(`[data-icon="${name}"]`)) {
+    if (!target.closest(`[data-icon="${label}"]`)) {
       setIsSelected(false);
     }
   };
@@ -125,16 +133,16 @@ export function DesktopIcon({
 
   return (
     <Draggable
-      defaultPosition={position}
+      defaultPosition={defaultPosition}
       bounds="parent"
       onStart={handleDragStart}
       onDrag={handleDrag}
       onStop={handleDragStop}
-      grid={[1, 1]}
+      grid={[120, 120]}
     >
       <div
         ref={iconRef}
-        data-icon={name}
+        data-icon={label}
         className={`absolute flex flex-col items-center gap-2 p-2 rounded cursor-pointer
           ${isSelected ? "bg-white/20" : "hover:bg-white/10"}
           transition-colors duration-200
@@ -143,14 +151,23 @@ export function DesktopIcon({
         onClick={handleClick}
         onDoubleClick={handleDoubleClick}
       >
-        <div className="w-16 h-16 flex items-center justify-center">
-          <Icon className="w-12 h-12" />
+        <div className="w-20 h-20 flex items-center justify-center">
+          {(() => {
+            const IconComp = icon || IconComponent[type];
+            return typeof IconComp === "string" ? (
+              <span className="w-16 h-16 flex items-center justify-center">
+                {IconComp}
+              </span>
+            ) : (
+              React.createElement(IconComp, { className: "w-16 h-16" })
+            );
+          })()}
         </div>
         <span
-          className={`font-pixel text-sm text-center px-1 select-none text-white break-words w-full
-            ${isSelected ? "bg-[#000080] text-white" : "text-white/90"}`}
+          className={`font-pixel text-sm text-center px-1 select-none text-black break-words w-full
+            ${isSelected ? "bg-[#000080] text-black" : "text-black"}`}
         >
-          {name}
+          {label}
         </span>
       </div>
     </Draggable>

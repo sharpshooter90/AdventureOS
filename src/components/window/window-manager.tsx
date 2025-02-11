@@ -17,6 +17,7 @@ type WindowManagerState = {
   windows: Record<string, WindowState>;
   activeWindowId: string | null;
   highestZIndex: number;
+  lastPosition: { x: number; y: number };
 };
 
 type WindowManagerAction =
@@ -42,6 +43,7 @@ const initialState: WindowManagerState = {
   windows: {},
   activeWindowId: null,
   highestZIndex: 0,
+  lastPosition: { x: 50, y: 50 },
 };
 
 function windowManagerReducer(
@@ -49,7 +51,21 @@ function windowManagerReducer(
   action: WindowManagerAction
 ): WindowManagerState {
   switch (action.type) {
-    case "OPEN_WINDOW":
+    case "OPEN_WINDOW": {
+      // Calculate new position based on last active window
+      const newPosition = {
+        x: state.lastPosition.x + 30,
+        y: state.lastPosition.y + 30,
+      };
+
+      // Reset position if window would go off screen
+      if (newPosition.x > window.innerWidth - 400) {
+        newPosition.x = 50;
+      }
+      if (newPosition.y > window.innerHeight - 300) {
+        newPosition.y = 50;
+      }
+
       return {
         ...state,
         windows: {
@@ -60,12 +76,15 @@ function windowManagerReducer(
             content: action.payload.content,
             isMinimized: false,
             isMaximized: false,
+            position: newPosition,
             zIndex: state.highestZIndex + 1,
           },
         },
         activeWindowId: action.payload.id,
         highestZIndex: state.highestZIndex + 1,
+        lastPosition: newPosition,
       };
+    }
 
     case "CLOSE_WINDOW": {
       const { [action.payload.id]: _, ...remainingWindows } = state.windows;
@@ -118,19 +137,24 @@ function windowManagerReducer(
         },
       };
 
-    case "FOCUS_WINDOW":
+    case "FOCUS_WINDOW": {
+      const window = state.windows[action.payload.id];
+      if (!window) return state;
+
       return {
         ...state,
         windows: {
           ...state.windows,
           [action.payload.id]: {
-            ...state.windows[action.payload.id],
+            ...window,
             zIndex: state.highestZIndex + 1,
           },
         },
         activeWindowId: action.payload.id,
         highestZIndex: state.highestZIndex + 1,
+        lastPosition: window.position || state.lastPosition,
       };
+    }
 
     case "UPDATE_POSITION":
       return {
