@@ -8,86 +8,122 @@ import { Content } from "../components/content/about-content";
 import { FolderContent } from "../components/content/folder-content";
 import { WhiteboardExcalidraw } from "../components/desktop/whiteboard-excalidraw";
 import { useState, useEffect } from "react";
+import { getApplicationForFile } from "../types/applications";
 
+// Sample content for files and folders
 const projectItems = [
   {
+    id: "project1",
+    name: "Project1.md",
+    type: "file",
     icon: "📄",
-    label: "Project1.md",
-    type: "file" as const,
-    content: <div>Project 1 content</div>,
+    content: "# Project 1\n\nThis is project 1's documentation.",
+    size: "2 KB",
+    modified: "2024-01-20",
   },
   {
+    id: "project2",
+    name: "Project2.md",
+    type: "file",
     icon: "📄",
-    label: "Project2.md",
-    type: "file" as const,
-    content: <div>Project 2 content</div>,
+    content: "# Project 2\n\nThis is project 2's documentation.",
+    size: "1.5 KB",
+    modified: "2024-01-21",
   },
 ];
 
 const playgroundItems = [
   {
+    id: "game1",
+    name: "Game1.txt",
+    type: "file",
     icon: "🎮",
-    label: "Game1.exe",
-    type: "file" as const,
-    content: <div>Game 1 content</div>,
+    content: "Game 1 instructions and notes",
+    size: "1 KB",
+    modified: "2024-01-19",
   },
   {
+    id: "game2",
+    name: "Game2.txt",
+    type: "file",
     icon: "🎮",
-    label: "Game2.exe",
-    type: "file" as const,
-    content: <div>Game 2 content</div>,
+    content: "Game 2 instructions and notes",
+    size: "1.2 KB",
+    modified: "2024-01-20",
   },
 ];
 
 const workItems = [
   {
-    icon: "💼",
-    label: "Resume.pdf",
-    type: "file" as const,
-    content: <div>Resume content</div>,
+    id: "resume",
+    name: "Resume.txt",
+    type: "file",
+    icon: "📄",
+    content: "Professional resume and experience",
+    size: "3 KB",
+    modified: "2024-01-18",
   },
   {
+    id: "experience",
+    name: "Experience.md",
+    type: "file",
     icon: "📄",
-    label: "Experience.md",
-    type: "file" as const,
-    content: <div>Experience content</div>,
+    content: "# Work Experience\n\nDetailed work history and achievements",
+    size: "4 KB",
+    modified: "2024-01-17",
   },
 ];
 
-const desktopItems = [
+interface DesktopItem {
+  id: string;
+  label: string;
+  type: "folder" | "file" | "text";
+  icon?: string;
+  content: any;
+  defaultPosition: { x: number; y: number };
+}
+
+const desktopItems: DesktopItem[] = [
   {
-    icon: "📄",
+    id: "about",
     label: "About.md",
-    type: "file" as const,
-    content: <Content />,
+    type: "text",
+    icon: "📄",
+    content: "# About Me\n\nWelcome to my portfolio!",
     defaultPosition: { x: 20, y: 20 },
   },
   {
-    icon: "📁",
+    id: "projects",
     label: "Projects",
-    type: "folder" as const,
-    content: <FolderContent items={projectItems} />,
+    type: "folder",
+    icon: "📁",
+    content: projectItems,
     defaultPosition: { x: 120, y: 20 },
   },
   {
-    icon: "📁",
+    id: "playground",
     label: "Playground",
-    type: "folder" as const,
-    content: <FolderContent items={playgroundItems} />,
+    type: "folder",
+    icon: "📁",
+    content: playgroundItems,
     defaultPosition: { x: 220, y: 20 },
   },
   {
-    icon: "📁",
+    id: "work",
     label: "Work",
-    type: "folder" as const,
-    content: <FolderContent items={workItems} />,
+    type: "folder",
+    icon: "📁",
+    content: workItems,
     defaultPosition: { x: 320, y: 20 },
   },
   {
+    id: "whiteboard",
+    label: "whiteboard.excalidraw",
+    type: "file",
     icon: "🖌️",
-    label: "whiteboard.exaclidraw",
-    type: "file" as const,
-    content: <WhiteboardExcalidraw />,
+    content: {
+      data: "", // Initial empty whiteboard
+    },
     defaultPosition: { x: 420, y: 20 },
   },
 ];
@@ -96,15 +132,6 @@ interface IconPosition {
   id: string;
   position: { x: number; y: number };
 }
-
-// Update the type definition to include defaultPosition
-type DesktopItem = {
-  icon: string;
-  label: string;
-  type: "file" | "folder";
-  content: React.ReactNode;
-  defaultPosition: { x: number; y: number };
-};
 
 function Desktop() {
   const { dispatch } = useWindowManager();
@@ -128,10 +155,9 @@ function Desktop() {
     }
   }, [iconPositions]);
 
-  // Update getIconPosition to use defaultPosition
   const getIconPosition = (id: string) => {
     const savedPosition = iconPositions.find((icon) => icon.id === id);
-    const defaultItem = desktopItems.find((item) => item.label === id);
+    const defaultItem = desktopItems.find((item) => item.id === id);
     return (
       savedPosition?.position || defaultItem?.defaultPosition || { x: 0, y: 0 }
     );
@@ -152,7 +178,7 @@ function Desktop() {
     });
   };
 
-  const handleItemOpen = (item: (typeof desktopItems)[0]) => {
+  const handleItemOpen = (item: DesktopItem) => {
     dispatch({
       type: "OPEN_WINDOW",
       payload: {
@@ -170,16 +196,17 @@ function Desktop() {
     <div className="relative min-h-screen w-full h-full p-4">
       {desktopItems.map((item) => (
         <DesktopIcon
-          key={item.label}
-          id={item.label}
-          icon={item.icon}
+          key={item.id}
+          id={item.id}
           label={item.label}
           type={item.type}
-          onDoubleClick={() => handleItemOpen(item)}
-          defaultPosition={getIconPosition(item.label)}
-          onPositionChange={(position: { x: number; y: number }) =>
-            handlePositionChange(item.label, position)
+          icon={item.icon}
+          content={item.content}
+          defaultPosition={getIconPosition(item.id)}
+          onPositionChange={(position) =>
+            handlePositionChange(item.id, position)
           }
+          onDoubleClick={() => handleItemOpen(item)}
         />
       ))}
     </div>
