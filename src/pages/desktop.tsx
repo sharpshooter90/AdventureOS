@@ -9,6 +9,7 @@ import { FolderContent } from "../components/content/folder-content";
 import { WhiteboardExcalidraw } from "../components/desktop/whiteboard-excalidraw";
 import { useState, useEffect } from "react";
 import { getApplicationForFile } from "../types/applications";
+import "./desktop.css";
 
 // Sample content for files and folders
 const projectItems = [
@@ -136,8 +137,13 @@ interface IconPosition {
 function Desktop() {
   const { dispatch } = useWindowManager();
   const [iconPositions, setIconPositions] = useState<IconPosition[]>([]);
+  const [selectedItems, setSelectedItems] = useState<string[]>([]);
+  const [isSelecting, setIsSelecting] = useState(false);
+  const [selectionBox, setSelectionBox] = useState({
+    start: { x: 0, y: 0 },
+    current: { x: 0, y: 0 },
+  });
 
-  // Load saved positions from localStorage on mount
   useEffect(() => {
     const savedPositions = localStorage.getItem("desktopIconPositions");
     if (savedPositions) {
@@ -145,7 +151,6 @@ function Desktop() {
     }
   }, []);
 
-  // Save positions to localStorage when they change
   useEffect(() => {
     if (iconPositions.length > 0) {
       localStorage.setItem(
@@ -192,8 +197,70 @@ function Desktop() {
     });
   };
 
+  const handleMouseDown = (e: React.MouseEvent) => {
+    if ((e.target as HTMLElement).classList.contains("desktop-background")) {
+      setIsSelecting(true);
+      setSelectionBox({
+        start: { x: e.clientX, y: e.clientY },
+        current: { x: e.clientX, y: e.clientY },
+      });
+      if (!e.shiftKey) {
+        setSelectedItems([]);
+      }
+    }
+  };
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (isSelecting) {
+      setSelectionBox((prev) => ({
+        ...prev,
+        current: { x: e.clientX, y: e.clientY },
+      }));
+    }
+  };
+
+  const handleMouseUp = () => {
+    if (isSelecting) {
+      setIsSelecting(false);
+      const selected = desktopItems.filter((item) => {
+        const pos = getIconPosition(item.id);
+        return isInSelectionBox(pos, selectionBox);
+      });
+      setSelectedItems((prev) => [
+        ...new Set([...prev, ...selected.map((item) => item.id)]),
+      ]);
+    }
+  };
+
+  const isInSelectionBox = (
+    pos: { x: number; y: number },
+    box: typeof selectionBox
+  ) => {
+    const left = Math.min(box.start.x, box.current.x);
+    const right = Math.max(box.start.x, box.current.x);
+    const top = Math.min(box.start.y, box.current.y);
+    const bottom = Math.max(box.start.y, box.current.y);
+
+    return pos.x >= left && pos.x <= right && pos.y >= top && pos.y <= bottom;
+  };
+
+  const handleIconClick = (id: string, e: React.MouseEvent) => {
+    if (e.ctrlKey || e.shiftKey) {
+      setSelectedItems((prev) =>
+        prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
+      );
+    } else {
+      setSelectedItems([id]);
+    }
+  };
+
   return (
-    <div className="relative min-h-screen w-full h-full p-4">
+    <div
+      className="relative min-h-screen w-full h-full p-4 desktop-background"
+      onMouseDown={handleMouseDown}
+      onMouseMove={handleMouseMove}
+      onMouseUp={handleMouseUp}
+    >
       {desktopItems.map((item) => (
         <DesktopIcon
           key={item.id}
@@ -207,8 +274,25 @@ function Desktop() {
             handlePositionChange(item.id, position)
           }
           onDoubleClick={() => handleItemOpen(item)}
+          onClick={(e) => handleIconClick(item.id, e)}
+          isSelected={selectedItems.includes(item.id)}
         />
       ))}
+
+      {isSelecting && (
+        <div
+          style={{
+            position: "absolute",
+            left: Math.min(selectionBox.start.x, selectionBox.current.x),
+            top: Math.min(selectionBox.start.y, selectionBox.current.y),
+            width: Math.abs(selectionBox.current.x - selectionBox.start.x),
+            height: Math.abs(selectionBox.current.y - selectionBox.start.y),
+            border: "1px solid #0066cc",
+            backgroundColor: "rgba(0, 102, 204, 0.1)",
+            pointerEvents: "none",
+          }}
+        />
+      )}
     </div>
   );
 }

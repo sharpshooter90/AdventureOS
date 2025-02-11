@@ -6,17 +6,10 @@ import { Outlet } from "react-router-dom";
 export default function RootLayout() {
   return (
     <div className="min-h-screen selection:bg-cyan-300 selection:text-gray-800 dark:selection:bg-cyan-600 dark:selection:text-white dotted-grid">
-      <NavBar />
+      {/* <NavBar /> */}
       <CmdkLauncher />
       <main className="container mx-auto px-4 py-8">
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.3 }}
-        >
-          <Outlet />
-        </motion.div>
+        <Outlet />
       </main>
     </div>
   );
