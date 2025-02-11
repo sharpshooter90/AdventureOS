@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import { useWindowManager } from "./window-manager";
 import { soundManager } from "../dialog/sound-manager";
 import "./window.css";
+import { IconView, ListView } from "./window-views";
 
 interface RetroWindowProps {
   window: {
@@ -13,15 +14,32 @@ interface RetroWindowProps {
     position?: { x: number; y: number };
     size?: { width: number; height: number };
     zIndex: number;
+    viewMode?: "list" | "icons";
+    items?: Array<{
+      id: string;
+      name: string;
+      icon?: string;
+      type: string;
+      size?: string;
+      modified?: string;
+    }>;
   };
   isActive: boolean;
+  onResize?: (width: number, height: number) => void;
 }
 
-export function RetroWindow({ window, isActive }: RetroWindowProps) {
+export function RetroWindow({ window, isActive, onResize }: RetroWindowProps) {
   const { dispatch } = useWindowManager();
   const [isDragging, setIsDragging] = useState(false);
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
   const windowRef = useRef<HTMLDivElement>(null);
+  const [isResizing, setIsResizing] = useState(false);
+  const [resizeEdge, setResizeEdge] = useState<string | null>(null);
+  const [initialSize, setInitialSize] = useState({ width: 0, height: 0 });
+  const [initialPosition, setInitialPosition] = useState({ x: 0, y: 0 });
+  const [viewMode, setViewMode] = useState<"list" | "icons">(
+    window.viewMode || "icons"
+  );
 
   const handleMouseDown = (e: React.MouseEvent) => {
     if (!window.isMaximized) {
@@ -38,10 +56,8 @@ export function RetroWindow({ window, isActive }: RetroWindowProps) {
     soundManager.play("select");
   };
 
-  useEffect(() => {
-    if (!isDragging) return;
-
-    const handleMouseMove = (e: MouseEvent) => {
+  const handleMouseMove = (e: MouseEvent) => {
+    if (isDragging) {
       dispatch({
         type: "UPDATE_POSITION",
         payload: {
@@ -52,11 +68,83 @@ export function RetroWindow({ window, isActive }: RetroWindowProps) {
           },
         },
       });
-    };
+    }
 
-    const handleMouseUp = () => {
-      setIsDragging(false);
-    };
+    if (isResizing && resizeEdge) {
+      e.preventDefault();
+      const deltaX = e.clientX - initialPosition.x;
+      const deltaY = e.clientY - initialPosition.y;
+
+      let newWidth = initialSize.width;
+      let newHeight = initialSize.height;
+      let newX = window.position?.x ?? 0;
+      let newY = window.position?.y ?? 0;
+
+      switch (resizeEdge) {
+        case "right":
+          newWidth = initialSize.width + deltaX;
+          break;
+        case "bottom":
+          newHeight = initialSize.height + deltaY;
+          break;
+        case "left":
+          newWidth = initialSize.width - deltaX;
+          newX = window.position?.x ?? 0 + deltaX;
+          break;
+        case "top":
+          newHeight = initialSize.height - deltaY;
+          newY = window.position?.y ?? 0 + deltaY;
+          break;
+      }
+
+      // Enforce minimum size
+      const minSize = 200;
+      newWidth = Math.max(minSize, newWidth);
+      newHeight = Math.max(minSize, newHeight);
+
+      dispatch({
+        type: "UPDATE_POSITION",
+        payload: {
+          id: window.id,
+          position: {
+            x: newX,
+            y: newY,
+          },
+        },
+      });
+      dispatch({
+        type: "UPDATE_SIZE",
+        payload: {
+          id: window.id,
+          size: {
+            width: newWidth,
+            height: newHeight,
+          },
+        },
+      });
+      onResize?.(newWidth, newHeight);
+    }
+  };
+
+  const handleMouseUp = () => {
+    setIsDragging(false);
+    setIsResizing(false);
+    setResizeEdge(null);
+  };
+
+  const startResize = (edge: string, e: React.MouseEvent) => {
+    e.preventDefault();
+    setIsResizing(true);
+    setResizeEdge(edge);
+    setInitialPosition({ x: e.clientX, y: e.clientY });
+    setInitialSize({
+      width: window.size?.width ?? 0,
+      height: window.size?.height ?? 0,
+    });
+  };
+
+  useEffect(() => {
+    if (!isDragging) return;
 
     document.addEventListener("mousemove", handleMouseMove);
     document.addEventListener("mouseup", handleMouseUp);
@@ -67,6 +155,15 @@ export function RetroWindow({ window, isActive }: RetroWindowProps) {
     };
   }, [isDragging, dragOffset, window.id, dispatch]);
 
+  useEffect(() => {
+    globalThis.addEventListener("mousemove", handleMouseMove);
+    globalThis.addEventListener("mouseup", handleMouseUp);
+    return () => {
+      globalThis.removeEventListener("mousemove", handleMouseMove);
+      globalThis.removeEventListener("mouseup", handleMouseUp);
+    };
+  }, [isResizing, initialPosition, initialSize, resizeEdge]);
+
   if (window.isMinimized) {
     return null;
   }
@@ -74,6 +171,8 @@ export function RetroWindow({ window, isActive }: RetroWindowProps) {
   const windowStyle: React.CSSProperties = {
     position: "absolute",
     zIndex: window.zIndex,
+    minHeight: "300px",
+    minWidth: "400px",
     ...(window.isMaximized
       ? { left: 0, top: 0, right: 0, bottom: 0 }
       : {
@@ -81,8 +180,9 @@ export function RetroWindow({ window, isActive }: RetroWindowProps) {
           top: window.position?.y ?? "50%",
           transform: window.position ? "none" : "translate(-50%, -50%)",
           width: window.size?.width ?? "800px",
-          height: window.size?.height ?? "auto",
+          height: window.size?.height ?? "500px",
         }),
+    cursor: isResizing ? `${resizeEdge}-resize` : "default",
   };
 
   return (
@@ -149,8 +249,65 @@ export function RetroWindow({ window, isActive }: RetroWindowProps) {
           </div>
         </div>
 
+        {/* Add view toggle buttons in the toolbar */}
+        <div className="window-toolbar">
+          <button
+            className={`toolbar-button ${viewMode === "icons" ? "active" : ""}`}
+            onClick={() => setViewMode("icons")}
+          >
+            Icons
+          </button>
+          <button
+            className={`toolbar-button ${viewMode === "list" ? "active" : ""}`}
+            onClick={() => setViewMode("list")}
+          >
+            List
+          </button>
+        </div>
+
         {/* Window Content */}
-        <div className="window-content">{window.content}</div>
+        <div className="window-content">
+          {viewMode === "icons" ? (
+            <IconView items={window.items || []} />
+          ) : (
+            <ListView items={window.items || []} />
+          )}
+        </div>
+
+        {/* Add resize handles */}
+        <div
+          className="resize-handle right"
+          onMouseDown={(e) => startResize("e", e)}
+        />
+        <div
+          className="resize-handle bottom"
+          onMouseDown={(e) => startResize("s", e)}
+        />
+        <div
+          className="resize-handle left"
+          onMouseDown={(e) => startResize("w", e)}
+        />
+        <div
+          className="resize-handle top"
+          onMouseDown={(e) => startResize("n", e)}
+        />
+        {/* Corner handles */}
+        <div
+          className="resize-handle top-left"
+          onMouseDown={(e) => startResize("nw", e)}
+        />
+        <div
+          className="resize-handle top-right"
+          onMouseDown={(e) => startResize("ne", e)}
+        />
+        <div
+          className="resize-handle bottom-left"
+          onMouseDown={(e) => startResize("sw", e)}
+        />
+        <div
+          className="resize-handle bottom-right"
+          onMouseDown={(e) => startResize("se", e)}
+        />
       </div>
     </div>
   );

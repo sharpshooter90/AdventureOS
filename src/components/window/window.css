@@ -60,3 +60,141 @@
 .window-content a {
   @apply text-blue-600 hover:underline;
 }
+
+.retro-window {
+  position: absolute;
+  min-width: 200px;
+  min-height: 200px;
+}
+
+.resize-handle {
+  position: absolute;
+  background: transparent;
+}
+
+.resize-handle.right {
+  width: 5px;
+  height: 100%;
+  right: 0;
+  top: 0;
+  cursor: e-resize;
+}
+
+.resize-handle.bottom {
+  width: 100%;
+  height: 5px;
+  bottom: 0;
+  left: 0;
+  cursor: s-resize;
+}
+
+.resize-handle.left {
+  width: 5px;
+  height: 100%;
+  left: 0;
+  top: 0;
+  cursor: w-resize;
+}
+
+.resize-handle.top {
+  width: 100%;
+  height: 5px;
+  top: 0;
+  left: 0;
+  cursor: n-resize;
+}
+
+/* Corner handles */
+.resize-handle.top-left,
+.resize-handle.top-right,
+.resize-handle.bottom-left,
+.resize-handle.bottom-right {
+  width: 10px;
+  height: 10px;
+}
+
+.resize-handle.top-left {
+  top: 0;
+  left: 0;
+  cursor: nw-resize;
+}
+
+.resize-handle.top-right {
+  top: 0;
+  right: 0;
+  cursor: ne-resize;
+}
+
+.resize-handle.bottom-left {
+  bottom: 0;
+  left: 0;
+  cursor: sw-resize;
+}
+
+.resize-handle.bottom-right {
+  bottom: 0;
+  right: 0;
+  cursor: se-resize;
+}
+
+.window-toolbar {
+  @apply flex items-center gap-2 px-2 py-1 bg-gray-200 border-b border-gray-300;
+}
+
+.toolbar-button {
+  @apply px-3 py-1 text-sm bg-gray-100 hover:bg-gray-300 transition-colors;
+}
+
+.toolbar-button.active {
+  @apply bg-blue-600 text-white;
+}
+
+/* Icon View */
+.icon-view {
+  @apply grid grid-cols-[repeat(auto-fill,minmax(80px,1fr))] gap-4 p-4;
+}
+
+.icon-item {
+  @apply flex flex-col items-center gap-1 p-2 cursor-pointer hover:bg-blue-100 rounded;
+}
+
+.icon-wrapper {
+  @apply w-12 h-12 flex items-center justify-center;
+}
+
+.icon {
+  @apply w-full h-full object-contain;
+}
+
+.default-icon {
+  @apply w-full h-full bg-gray-200 flex items-center justify-center text-gray-600 font-bold rounded;
+}
+
+.icon-label {
+  @apply text-center text-sm truncate w-full;
+}
+
+/* List View */
+.list-view {
+  @apply w-full;
+}
+
+.list-header {
+  @apply grid grid-cols-[2fr,1fr,1fr,1fr] gap-2 px-4 py-2 bg-gray-100 font-bold text-sm border-b border-gray-200;
+}
+
+.list-item {
+  @apply grid grid-cols-[2fr,1fr,1fr,1fr] gap-2 px-4 py-2 hover:bg-blue-50 cursor-pointer border-b border-gray-100;
+}
+
+.name-col {
+  @apply flex items-center gap-2;
+}
+
+.icon-small {
+  @apply w-4 h-4 flex items-center justify-center;
+}
+
+.default-icon-small {
+  @apply w-full h-full bg-gray-200 flex items-center justify-center text-gray-600 text-xs rounded;
+}

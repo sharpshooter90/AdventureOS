@@ -1,0 +1,31 @@
+.icon-wrapper {
+  @apply w-16 h-16 flex items-center justify-center;
+  background: transparent;
+}
+
+.icon-wrapper img {
+  @apply w-12 h-12 object-contain;
+  image-rendering: pixelated; /* For pixel-perfect icons */
+}
+
+.icon-label {
+  @apply font-pixel text-sm text-center px-1 select-none text-white;
+  max-width: 96px;
+  word-wrap: break-word;
+  text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.5);
+}
+
+/* Add hover effect for desktop icons */
+.desktop-icon:hover {
+  @apply bg-white/10;
+}
+
+/* Selected state for desktop icons */
+.desktop-icon.selected {
+  @apply bg-white/20;
+}
+
+/* Selected label state */
+.desktop-icon.selected .icon-label {
+  @apply bg-[#000080];
+}
