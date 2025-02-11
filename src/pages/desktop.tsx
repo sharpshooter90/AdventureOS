@@ -2,10 +2,11 @@ import { PageLayout } from "../components/layout/page-layout";
 import {
   WindowManagerProvider,
   useWindowManager,
-} from "@/components/window/window-manager";
-import { DesktopIcon } from "@/components/desktop/desktop-icon";
-import { Content } from "@/components/content/about-content";
-import { FolderContent } from "@/components/content/folder-content";
+} from "../components/window/window-manager";
+import { DesktopIcon } from "../components/desktop/desktop-icon";
+import { Content } from "../components/content/about-content";
+import { FolderContent } from "../components/content/folder-content";
+import { WhiteboardExcalidraw } from "../components/desktop/whiteboard-excalidraw";
 import { useState, useEffect } from "react";
 
 const projectItems = [
@@ -59,24 +60,35 @@ const desktopItems = [
     label: "About.md",
     type: "file" as const,
     content: <Content />,
+    defaultPosition: { x: 20, y: 20 },
   },
   {
     icon: "📁",
     label: "Projects",
     type: "folder" as const,
     content: <FolderContent items={projectItems} />,
+    defaultPosition: { x: 120, y: 20 },
   },
   {
     icon: "📁",
     label: "Playground",
     type: "folder" as const,
     content: <FolderContent items={playgroundItems} />,
+    defaultPosition: { x: 220, y: 20 },
   },
   {
     icon: "📁",
     label: "Work",
     type: "folder" as const,
     content: <FolderContent items={workItems} />,
+    defaultPosition: { x: 320, y: 20 },
+  },
+  {
+    icon: "🖌️",
+    label: "whiteboard.exaclidraw",
+    type: "file" as const,
+    content: <WhiteboardExcalidraw />,
+    defaultPosition: { x: 420, y: 20 },
   },
 ];
 
@@ -84,6 +96,15 @@ interface IconPosition {
   id: string;
   position: { x: number; y: number };
 }
+
+// Update the type definition to include defaultPosition
+type DesktopItem = {
+  icon: string;
+  label: string;
+  type: "file" | "folder";
+  content: React.ReactNode;
+  defaultPosition: { x: number; y: number };
+};
 
 function Desktop() {
   const { dispatch } = useWindowManager();
@@ -107,9 +128,13 @@ function Desktop() {
     }
   }, [iconPositions]);
 
+  // Update getIconPosition to use defaultPosition
   const getIconPosition = (id: string) => {
     const savedPosition = iconPositions.find((icon) => icon.id === id);
-    return savedPosition?.position || { x: 0, y: 0 };
+    const defaultItem = desktopItems.find((item) => item.label === id);
+    return (
+      savedPosition?.position || defaultItem?.defaultPosition || { x: 0, y: 0 }
+    );
   };
 
   const handlePositionChange = (
@@ -146,12 +171,13 @@ function Desktop() {
       {desktopItems.map((item) => (
         <DesktopIcon
           key={item.label}
+          id={item.label}
           icon={item.icon}
           label={item.label}
           type={item.type}
           onDoubleClick={() => handleItemOpen(item)}
           defaultPosition={getIconPosition(item.label)}
-          onPositionChange={(position) =>
+          onPositionChange={(position: { x: number; y: number }) =>
             handlePositionChange(item.label, position)
           }
         />

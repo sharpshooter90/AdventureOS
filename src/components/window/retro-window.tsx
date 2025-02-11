@@ -181,8 +181,27 @@ export function RetroWindow({ window, isActive, onResize }: RetroWindowProps) {
           transform: window.position ? "none" : "translate(-50%, -50%)",
           width: window.size?.width ?? "800px",
           height: window.size?.height ?? "500px",
+          transformOrigin: "top left",
         }),
     cursor: isResizing ? `${resizeEdge}-resize` : "default",
+  };
+
+  // Determine content type based on window ID
+  const getContentClass = () => {
+    if (window.id.startsWith("folder-")) {
+      return "window-content-folder";
+    }
+    if (window.id.endsWith(".md") || window.id.endsWith(".txt")) {
+      return "window-content-text";
+    }
+    if (
+      window.id.endsWith(".png") ||
+      window.id.endsWith(".jpg") ||
+      window.id.endsWith(".gif")
+    ) {
+      return "window-content-image";
+    }
+    return "window-content-default";
   };
 
   return (
@@ -266,48 +285,31 @@ export function RetroWindow({ window, isActive, onResize }: RetroWindowProps) {
         </div>
 
         {/* Window Content */}
-        <div className="window-content">
-          {viewMode === "icons" ? (
-            <IconView items={window.items || []} />
-          ) : (
-            <ListView items={window.items || []} />
-          )}
+        <div className={`window-content ${getContentClass()}`}>
+          {window.content}
         </div>
 
-        {/* Add resize handles */}
-        <div
-          className="resize-handle right"
-          onMouseDown={(e) => startResize("e", e)}
-        />
-        <div
-          className="resize-handle bottom"
-          onMouseDown={(e) => startResize("s", e)}
-        />
-        <div
-          className="resize-handle left"
-          onMouseDown={(e) => startResize("w", e)}
-        />
-        <div
-          className="resize-handle top"
-          onMouseDown={(e) => startResize("n", e)}
-        />
-        {/* Corner handles */}
-        <div
-          className="resize-handle top-left"
-          onMouseDown={(e) => startResize("nw", e)}
-        />
-        <div
-          className="resize-handle top-right"
-          onMouseDown={(e) => startResize("ne", e)}
-        />
-        <div
-          className="resize-handle bottom-left"
-          onMouseDown={(e) => startResize("sw", e)}
-        />
-        <div
-          className="resize-handle bottom-right"
-          onMouseDown={(e) => startResize("se", e)}
-        />
+        {/* Resize handles */}
+        {!window.isMaximized && (
+          <>
+            <div
+              className="absolute top-0 left-0 w-2 h-full cursor-w-resize"
+              onMouseDown={(e) => startResize("left", e)}
+            />
+            <div
+              className="absolute top-0 right-0 w-2 h-full cursor-e-resize"
+              onMouseDown={(e) => startResize("right", e)}
+            />
+            <div
+              className="absolute bottom-0 left-0 w-full h-2 cursor-s-resize"
+              onMouseDown={(e) => startResize("bottom", e)}
+            />
+            <div
+              className="absolute top-0 left-0 w-full h-2 cursor-n-resize"
+              onMouseDown={(e) => startResize("top", e)}
+            />
+          </>
+        )}
       </div>
     </div>
   );
