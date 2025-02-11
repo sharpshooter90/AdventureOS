@@ -1,0 +1,77 @@
+.desktop-background {
+  background-color: #008080; /* Classic Windows 95/98 teal background */
+  min-height: 100vh;
+  width: 100%;
+  position: relative;
+  overflow: hidden;
+  user-select: none; /* Prevents text selection while dragging */
+}
+
+/* Selection box styling */
+.selection-box {
+  position: absolute;
+  border: 1px solid #0066cc;
+  background-color: rgba(0, 102, 204, 0.1);
+  pointer-events: none;
+  z-index: 1000;
+}
+
+/* Desktop grid layout */
+.desktop-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, 80px);
+  grid-auto-rows: 100px;
+  gap: 1rem;
+  padding: 1rem;
+}
+
+/* Desktop container */
+.desktop-container {
+  position: relative;
+  min-height: 100vh;
+  width: 100%;
+  padding: 4px;
+}
+
+/* Custom scrollbar */
+.desktop-background::-webkit-scrollbar {
+  width: 16px;
+}
+
+.desktop-background::-webkit-scrollbar-track {
+  background: #c0c0c0;
+}
+
+.desktop-background::-webkit-scrollbar-thumb {
+  background: #808080;
+  border: 1px solid #404040;
+}
+
+.desktop-background::-webkit-scrollbar-thumb:hover {
+  background: #666666;
+}
+
+/* Context menu overlay prevention */
+.desktop-background * {
+  -webkit-context-menu: none;
+  -moz-context-menu: none;
+  -ms-context-menu: none;
+  context-menu: none;
+}
+
+.desktop-background {
+  user-select: none; /* Prevents text selection while dragging */
+}
+
+.desktop-icon {
+  transition: background-color 0.1s;
+}
+
+.desktop-icon.selected {
+  background-color: rgba(
+    59,
+    130,
+    246,
+    0.2
+  ); /* Light blue background for selected items */
+}

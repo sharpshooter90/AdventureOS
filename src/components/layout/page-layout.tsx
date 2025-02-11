@@ -1,4 +1,3 @@
-import { MotionWrapper } from "./motion-wrapper";
 import { NavBar } from "./nav-bar";
 
 interface PageLayoutProps {
@@ -19,17 +18,9 @@ export function PageLayout({
   hideNav = false,
 }: PageLayoutProps) {
   return (
-    <MotionWrapper>
-      <div className="min-h-screen bg-background">
-        {!hideNav && <NavBar />}
-        <main
-          className={` space-y-4 mx-auto ${
-            fullWidth ? "" : "container"
-          } ${className}`}
-        >
-          {children}
-        </main>
-      </div>
-    </MotionWrapper>
+    <div className="min-h-screen bg-background">
+      {!hideNav && <NavBar />}
+      <main className={` ${fullWidth ? "" : ""} ${className}`}>{children}</main>
+    </div>
   );
 }

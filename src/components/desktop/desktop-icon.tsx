@@ -21,6 +21,8 @@ export interface DesktopIconProps {
   content: any;
   defaultPosition: { x: number; y: number };
   onPositionChange: (position: { x: number; y: number }) => void;
+  onClick?: (e: React.MouseEvent) => void;
+  isSelected?: boolean;
 }
 
 const IconComponent = {
@@ -40,6 +42,8 @@ export function DesktopIcon({
   content,
   defaultPosition,
   onPositionChange,
+  onClick,
+  isSelected = false,
 }: DesktopIconProps) {
   const { dispatch } = useWindowManager();
   const [position, setPosition] = useState(defaultPosition);
@@ -87,8 +91,9 @@ export function DesktopIcon({
       <div
         className={`absolute flex flex-col items-center p-2 cursor-pointer select-none ${
           isDragging ? "opacity-50" : ""
-        }`}
+        } ${isSelected ? "bg-blue-200" : ""}`}
         onDoubleClick={handleDoubleClick}
+        onClick={onClick}
       >
         <div className="text-2xl mb-1">
           {icon || (type === "folder" ? "📁" : "📄")}
