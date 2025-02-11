@@ -23,7 +23,7 @@ export function PageLayout({
       <div className="min-h-screen bg-background">
         {!hideNav && <NavBar />}
         <main
-          className={`flex min-h-screen flex-col w-full max-w-[640px] space-y-4 mx-auto ${
+          className={` space-y-4 mx-auto ${
             fullWidth ? "" : "container"
           } ${className}`}
         >

@@ -6,6 +6,7 @@ import {
 import { DesktopIcon } from "@/components/desktop/desktop-icon";
 import { Content } from "@/components/content/about-content";
 import { FolderContent } from "@/components/content/folder-content";
+import { useState, useEffect } from "react";
 
 const projectItems = [
   {
@@ -79,8 +80,52 @@ const desktopItems = [
   },
 ];
 
+interface IconPosition {
+  id: string;
+  position: { x: number; y: number };
+}
+
 function Desktop() {
   const { dispatch } = useWindowManager();
+  const [iconPositions, setIconPositions] = useState<IconPosition[]>([]);
+
+  // Load saved positions from localStorage on mount
+  useEffect(() => {
+    const savedPositions = localStorage.getItem("desktopIconPositions");
+    if (savedPositions) {
+      setIconPositions(JSON.parse(savedPositions));
+    }
+  }, []);
+
+  // Save positions to localStorage when they change
+  useEffect(() => {
+    if (iconPositions.length > 0) {
+      localStorage.setItem(
+        "desktopIconPositions",
+        JSON.stringify(iconPositions)
+      );
+    }
+  }, [iconPositions]);
+
+  const getIconPosition = (id: string) => {
+    const savedPosition = iconPositions.find((icon) => icon.id === id);
+    return savedPosition?.position || { x: 0, y: 0 };
+  };
+
+  const handlePositionChange = (
+    id: string,
+    newPosition: { x: number; y: number }
+  ) => {
+    setIconPositions((prev) => {
+      const existing = prev.findIndex((icon) => icon.id === id);
+      if (existing !== -1) {
+        const newPositions = [...prev];
+        newPositions[existing] = { id, position: newPosition };
+        return newPositions;
+      }
+      return [...prev, { id, position: newPosition }];
+    });
+  };
 
   const handleItemOpen = (item: (typeof desktopItems)[0]) => {
     dispatch({
@@ -97,7 +142,7 @@ function Desktop() {
   };
 
   return (
-    <div className="min-h-screen p-8 grid grid-cols-[repeat(auto-fill,minmax(100px,1fr))] auto-rows-max gap-4 content-start">
+    <div className="relative min-h-screen w-full h-full p-4">
       {desktopItems.map((item) => (
         <DesktopIcon
           key={item.label}
@@ -105,6 +150,10 @@ function Desktop() {
           label={item.label}
           type={item.type}
           onDoubleClick={() => handleItemOpen(item)}
+          defaultPosition={getIconPosition(item.label)}
+          onPositionChange={(position) =>
+            handlePositionChange(item.label, position)
+          }
         />
       ))}
     </div>
