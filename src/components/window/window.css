@@ -1,0 +1,62 @@
+.window-button {
+  @apply px-2 py-1 hover:bg-[#4040c0] transition-colors font-normal;
+  min-width: 24px;
+  text-align: center;
+}
+
+.window-enter {
+  animation: window-enter 0.3s ease-out;
+}
+
+.window-exit {
+  animation: window-exit 0.3s ease-in;
+}
+
+.dialog-header {
+  @apply flex justify-between items-center px-2 py-1 bg-[#000080] text-white border-b-2 border-white/20;
+}
+
+.dialog-title {
+  @apply font-pixel text-sm truncate;
+}
+
+@keyframes window-enter {
+  from {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes window-exit {
+  from {
+    transform: scale(1);
+    opacity: 1;
+  }
+  to {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+}
+
+.window-content {
+  @apply p-4 flex-1 overflow-auto bg-white/90 text-black;
+}
+
+.window-content h1,
+.window-content h2,
+.window-content h3,
+.window-content h4 {
+  @apply font-pixel;
+}
+
+.window-content p {
+  @apply mb-4;
+}
+
+.window-content a {
+  @apply text-blue-600 hover:underline;
+}
