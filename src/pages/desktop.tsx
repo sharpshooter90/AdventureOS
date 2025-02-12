@@ -233,6 +233,16 @@ const desktopItems: DesktopItem[] = [
     size: "0 KB",
     modified: "2024-01-24",
   },
+  {
+    id: "audio-player",
+    label: "RetroTunes",
+    type: "file",
+    icon: "📻",
+    content: null,
+    defaultPosition: { x: 620, y: 20 },
+    size: "0 KB",
+    modified: "2024-01-24",
+  },
 ];
 
 interface IconPosition {
@@ -301,6 +311,8 @@ function Desktop() {
           appType = ApplicationType.WHITEBOARD;
         } else if (item.id === "devtools") {
           appType = ApplicationType.DEVTOOLS;
+        } else if (item.id === "audio-player") {
+          appType = ApplicationType.AUDIO_PLAYER;
         }
         break;
       case "text":

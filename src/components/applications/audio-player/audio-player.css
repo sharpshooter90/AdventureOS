@@ -1,0 +1,28 @@
+.retro-player {
+  font-family: "Press Start 2P", monospace;
+}
+
+.retro-display {
+  box-shadow: inset 0 0 10px rgba(0, 255, 0, 0.1);
+}
+
+.retro-text {
+  text-shadow: 0 0 5px rgba(0, 255, 0, 0.5);
+}
+
+.retro-button {
+  transition: all 0.2s ease;
+}
+
+.retro-button:active {
+  transform: scale(0.95);
+}
+
+.retro-track {
+  border-left: 4px solid transparent;
+}
+
+.retro-slider {
+  height: 4px;
+  background: #2d3748;
+}

@@ -10,6 +10,7 @@ import { FolderContent } from "../content/folder-content";
 import { TextContent } from "../content/text-content";
 import { WhiteboardExcalidraw } from "../desktop/whiteboard-excalidraw";
 import { DevTools } from "./dev-tools/dev-tools";
+import { AudioPlayer } from "./audio-player/audio-player";
 
 interface AppWrapperProps {
   appType: ApplicationType;
@@ -18,35 +19,38 @@ interface AppWrapperProps {
 }
 
 export function formatWindowTitle(appType: ApplicationType, title: string) {
-  switch (appType) {
-    case ApplicationType.FOLDER:
-      return `${title} - File Explorer`;
-    case ApplicationType.DEVTOOLS:
-      return `${title} - Developer Tools`;
-    default:
-      return title;
-  }
-}
-
-export function getWindowIcon(appType: ApplicationType) {
-  return ApplicationMap[appType].icon;
+  const appInfo = ApplicationMap[appType];
+  return `${appInfo.icon} ${title}`;
 }
 
 export function AppWrapper({ appType, title, content }: AppWrapperProps) {
-  const renderContent = () => {
-    switch (appType) {
-      case ApplicationType.FOLDER:
-        return <FolderContent items={content?.items || []} />;
-      case ApplicationType.TEXT:
-        return <TextContent content={content} />;
-      case ApplicationType.WHITEBOARD:
-        return <WhiteboardExcalidraw content={content} />;
-      case ApplicationType.DEVTOOLS:
-        return <DevTools />;
-      default:
-        return <div className="p-4">{content}</div>;
-    }
-  };
-
-  return <div className="h-full flex flex-col">{renderContent()}</div>;
+  switch (appType) {
+    case ApplicationType.FOLDER:
+      return <FolderContent items={content?.items || []} />;
+    case ApplicationType.TEXT:
+      return <TextContent content={content?.text || ""} />;
+    case ApplicationType.WHITEBOARD:
+      return <WhiteboardExcalidraw />;
+    case ApplicationType.DEVTOOLS:
+      return <DevTools />;
+    case ApplicationType.FILE_EXPLORER:
+      return (
+        <FileExplorer
+          items={content?.items || []}
+          path={content?.path || "/"}
+        />
+      );
+    case ApplicationType.TEXT_EDITOR:
+      return (
+        <TextEditor
+          filename={title}
+          content={content?.text || ""}
+          onSave={content?.onSave}
+        />
+      );
+    case ApplicationType.AUDIO_PLAYER:
+      return <AudioPlayer />;
+    default:
+      return <div>Unsupported application type: {appType}</div>;
+  }
 }

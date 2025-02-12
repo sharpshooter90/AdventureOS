@@ -10,6 +10,7 @@ export enum ApplicationType {
   SETTINGS = "SETTINGS",
   BROWSER = "BROWSER",
   CALCULATOR = "CALCULATOR",
+  AUDIO_PLAYER = "AUDIO_PLAYER",
 }
 
 export interface ApplicationInfo {
@@ -74,6 +75,11 @@ export const ApplicationMap: Record<ApplicationType, ApplicationInfo> = {
     name: "Calculator",
     icon: "🧮",
     defaultSize: { width: 300, height: 400 },
+  },
+  [ApplicationType.AUDIO_PLAYER]: {
+    name: "Audio Player",
+    icon: "📻",
+    defaultSize: { width: 350, height: 450 },
   },
 };
 
