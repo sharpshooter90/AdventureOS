@@ -1,6 +1,12 @@
 import React from "react";
 
-export function WhiteboardExcalidraw() {
+interface WhiteboardExcalidrawProps {
+  content?: {
+    data?: string;
+  };
+}
+
+export function WhiteboardExcalidraw({ content }: WhiteboardExcalidrawProps) {
   return (
     <div className="w-full h-full">
       <iframe

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import "./App.css";
+import "./styles/tokens.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { AppProvider } from "@/providers/app-provider";
 import { RouterProvider } from "react-router-dom";

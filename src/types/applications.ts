@@ -1,129 +1,102 @@
-export type ApplicationType =
-  | "fileExplorer"
-  | "textEditor"
-  | "imageViewer"
-  | "terminal"
-  | "settings"
-  | "browser"
-  | "calculator"
-  | "whiteboard";
+export enum ApplicationType {
+  FOLDER = "FOLDER",
+  TEXT = "TEXT",
+  WHITEBOARD = "WHITEBOARD",
+  DEVTOOLS = "DEVTOOLS",
+  FILE_EXPLORER = "FILE_EXPLORER",
+  TEXT_EDITOR = "TEXT_EDITOR",
+  IMAGE_VIEWER = "IMAGE_VIEWER",
+  TERMINAL = "TERMINAL",
+  SETTINGS = "SETTINGS",
+  BROWSER = "BROWSER",
+  CALCULATOR = "CALCULATOR",
+}
 
 export interface ApplicationInfo {
   name: string;
   icon: string;
-  title: string;
-  fileExtensions?: string[];
-  defaultSize?: {
-    width: number;
-    height: number;
-  };
+  defaultSize: { width: number; height: number };
+  title?: string;
 }
 
 export const ApplicationMap: Record<ApplicationType, ApplicationInfo> = {
-  fileExplorer: {
-    name: "File Explorer",
+  [ApplicationType.FOLDER]: {
+    name: "Folder",
     icon: "📁",
-    title: "Explorer",
-    defaultSize: {
-      width: 800,
-      height: 600,
-    },
+    defaultSize: { width: 600, height: 400 },
   },
-  textEditor: {
+  [ApplicationType.TEXT]: {
     name: "Text Editor",
     icon: "📝",
-    title: "Notepad",
-    fileExtensions: [".txt", ".md"],
-    defaultSize: {
-      width: 600,
-      height: 400,
-    },
+    defaultSize: { width: 600, height: 400 },
   },
-  imageViewer: {
-    name: "Image Viewer",
-    icon: "🖼️",
-    title: "Image Viewer",
-    fileExtensions: [".png", ".jpg", ".gif"],
-    defaultSize: {
-      width: 800,
-      height: 600,
-    },
-  },
-  terminal: {
-    name: "Terminal",
-    icon: "⌨️",
-    title: "Terminal",
-    defaultSize: {
-      width: 600,
-      height: 400,
-    },
-  },
-  settings: {
-    name: "Settings",
-    icon: "⚙️",
-    title: "Settings",
-    defaultSize: {
-      width: 600,
-      height: 500,
-    },
-  },
-  browser: {
-    name: "Browser",
-    icon: "🌐",
-    title: "Browser",
-    fileExtensions: [".html", ".url"],
-    defaultSize: {
-      width: 1024,
-      height: 768,
-    },
-  },
-  calculator: {
-    name: "Calculator",
-    icon: "🧮",
-    title: "Calculator",
-    defaultSize: {
-      width: 300,
-      height: 400,
-    },
-  },
-  whiteboard: {
+  [ApplicationType.WHITEBOARD]: {
     name: "Whiteboard",
     icon: "🖌️",
-    title: "Excalidraw",
-    fileExtensions: [".excalidraw"],
-    defaultSize: {
-      width: 1024,
-      height: 768,
-    },
+    defaultSize: { width: 800, height: 600 },
+  },
+  [ApplicationType.DEVTOOLS]: {
+    name: "DevTools",
+    icon: "🛠️",
+    defaultSize: { width: 800, height: 600 },
+  },
+  [ApplicationType.FILE_EXPLORER]: {
+    name: "File Explorer",
+    icon: "📂",
+    defaultSize: { width: 600, height: 400 },
+  },
+  [ApplicationType.TEXT_EDITOR]: {
+    name: "Text Editor",
+    icon: "📝",
+    defaultSize: { width: 600, height: 400 },
+  },
+  [ApplicationType.IMAGE_VIEWER]: {
+    name: "Image Viewer",
+    icon: "🖼️",
+    defaultSize: { width: 600, height: 400 },
+  },
+  [ApplicationType.TERMINAL]: {
+    name: "Terminal",
+    icon: "💻",
+    defaultSize: { width: 600, height: 400 },
+  },
+  [ApplicationType.SETTINGS]: {
+    name: "Settings",
+    icon: "⚙️",
+    defaultSize: { width: 600, height: 400 },
+  },
+  [ApplicationType.BROWSER]: {
+    name: "Browser",
+    icon: "🌐",
+    defaultSize: { width: 800, height: 600 },
+  },
+  [ApplicationType.CALCULATOR]: {
+    name: "Calculator",
+    icon: "🧮",
+    defaultSize: { width: 300, height: 400 },
   },
 };
 
 export function getApplicationForFile(filename: string): ApplicationType {
   const extension = filename.toLowerCase().split(".").pop();
-  if (!extension) return "textEditor"; // Default to text editor if no extension
-
-  for (const [appType, appInfo] of Object.entries(ApplicationMap)) {
-    if (appInfo.fileExtensions?.includes(`.${extension}`)) {
-      return appType as ApplicationType;
-    }
-  }
+  if (!extension) return ApplicationType.TEXT_EDITOR; // Default to text editor if no extension
 
   // Default mappings for common file types
   switch (extension) {
     case "txt":
     case "md":
-      return "textEditor";
+      return ApplicationType.TEXT_EDITOR;
     case "png":
     case "jpg":
     case "jpeg":
     case "gif":
-      return "imageViewer";
+      return ApplicationType.IMAGE_VIEWER;
     case "html":
     case "url":
-      return "browser";
+      return ApplicationType.BROWSER;
     case "excalidraw":
-      return "whiteboard";
+      return ApplicationType.WHITEBOARD;
     default:
-      return "textEditor"; // Default to text editor for unknown file types
+      return ApplicationType.TEXT_EDITOR; // Default to text editor for unknown file types
   }
 }

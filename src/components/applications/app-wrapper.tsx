@@ -6,6 +6,10 @@ import {
 import { FileExplorer } from "./file-explorer/file-explorer";
 import { TextEditor } from "./text-editor/text-editor";
 import { WhiteboardViewer } from "./whiteboard/whiteboard-viewer";
+import { FolderContent } from "../content/folder-content";
+import { TextContent } from "../content/text-content";
+import { WhiteboardExcalidraw } from "../desktop/whiteboard-excalidraw";
+import { DevTools } from "./dev-tools/dev-tools";
 
 interface AppWrapperProps {
   appType: ApplicationType;
@@ -14,8 +18,14 @@ interface AppWrapperProps {
 }
 
 export function formatWindowTitle(appType: ApplicationType, title: string) {
-  const app = ApplicationMap[appType];
-  return `${title} - ${app.title}`;
+  switch (appType) {
+    case ApplicationType.FOLDER:
+      return `${title} - File Explorer`;
+    case ApplicationType.DEVTOOLS:
+      return `${title} - Developer Tools`;
+    default:
+      return title;
+  }
 }
 
 export function getWindowIcon(appType: ApplicationType) {
@@ -25,19 +35,14 @@ export function getWindowIcon(appType: ApplicationType) {
 export function AppWrapper({ appType, title, content }: AppWrapperProps) {
   const renderContent = () => {
     switch (appType) {
-      case "fileExplorer":
-        return <FileExplorer path={content.path} items={content.items} />;
-      case "textEditor":
-        return (
-          <TextEditor
-            filename={title}
-            content={content.text}
-            onSave={content.onSave}
-          />
-        );
-      case "whiteboard":
-        return <WhiteboardViewer filename={title} content={content.data} />;
-      // Add other application types here as we implement them
+      case ApplicationType.FOLDER:
+        return <FolderContent items={content?.items || []} />;
+      case ApplicationType.TEXT:
+        return <TextContent content={content} />;
+      case ApplicationType.WHITEBOARD:
+        return <WhiteboardExcalidraw content={content} />;
+      case ApplicationType.DEVTOOLS:
+        return <DevTools />;
       default:
         return <div className="p-4">{content}</div>;
     }
