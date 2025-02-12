@@ -9,6 +9,11 @@
   transform-origin: top left;
 }
 
+.window-enter.from-minimized {
+  animation: window-restore 0.3s ease-out;
+  transform-origin: bottom;
+}
+
 .window-exit {
   animation: window-exit 0.3s ease-in;
   transform-origin: top left;
@@ -29,6 +34,17 @@
   }
   to {
     transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes window-restore {
+  from {
+    transform: translateY(100%) scale(0.5);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0) scale(1);
     opacity: 1;
   }
 }
