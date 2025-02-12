@@ -1,0 +1,36 @@
+:root {
+  /* Base colors */
+  --color-primary: #008080;
+  --color-secondary: #c0c0c0;
+  --color-background: var(--color-primary);
+
+  /* Desktop colors */
+  --desktop-bg: var(--color-primary);
+  --desktop-icon-selected: rgba(59, 130, 246, 0.2);
+  --desktop-selection-border: #0066cc;
+  --desktop-selection-bg: rgba(0, 102, 204, 0.1);
+
+  /* Scrollbar colors */
+  --scrollbar-track: #c0c0c0;
+  --scrollbar-thumb: #808080;
+  --scrollbar-thumb-hover: #666666;
+  --scrollbar-border: #404040;
+
+  /* Text colors */
+  --text-primary: #000000;
+  --text-secondary: #404040;
+  --text-disabled: #808080;
+
+  /* UI Element colors */
+  --window-border: #404040;
+  --window-titlebar: #000080;
+  --window-titlebar-text: #ffffff;
+  --window-bg: #ffffff;
+
+  /* Interactive element colors */
+  --button-bg: var(--color-secondary);
+  --button-text: var(--text-primary);
+  --button-border: var(--window-border);
+  --button-hover-bg: #d4d4d4;
+  --button-active-bg: #a0a0a0;
+}

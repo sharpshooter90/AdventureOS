@@ -8,7 +8,7 @@ import { Content } from "../components/content/about-content";
 import { FolderContent } from "../components/content/folder-content";
 import { WhiteboardExcalidraw } from "../components/desktop/whiteboard-excalidraw";
 import { useState, useEffect } from "react";
-import { getApplicationForFile } from "../types/applications";
+import { getApplicationForFile, ApplicationType } from "../types/applications";
 import "./desktop.css";
 
 // Sample content for files and folders
@@ -31,6 +31,34 @@ const projectItems = [
     size: "1.5 KB",
     modified: "2024-01-21",
   },
+  {
+    id: "project-assets",
+    name: "Assets",
+    type: "folder",
+    icon: "📁",
+    content: [
+      {
+        id: "logo",
+        name: "logo.png",
+        type: "file",
+        icon: "🖼️",
+        content: null,
+        size: "50 KB",
+        modified: "2024-01-15",
+      },
+      {
+        id: "design",
+        name: "design.fig",
+        type: "file",
+        icon: "🎨",
+        content: null,
+        size: "2.5 MB",
+        modified: "2024-01-18",
+      },
+    ],
+    size: "2.55 MB",
+    modified: "2024-01-18",
+  },
 ];
 
 const playgroundItems = [
@@ -51,6 +79,34 @@ const playgroundItems = [
     content: "Game 2 instructions and notes",
     size: "1.2 KB",
     modified: "2024-01-20",
+  },
+  {
+    id: "saves",
+    name: "Saves",
+    type: "folder",
+    icon: "📁",
+    content: [
+      {
+        id: "save1",
+        name: "save1.dat",
+        type: "file",
+        icon: "💾",
+        content: null,
+        size: "128 KB",
+        modified: "2024-01-22",
+      },
+      {
+        id: "save2",
+        name: "save2.dat",
+        type: "file",
+        icon: "💾",
+        content: null,
+        size: "256 KB",
+        modified: "2024-01-23",
+      },
+    ],
+    size: "384 KB",
+    modified: "2024-01-23",
   },
 ];
 
@@ -73,6 +129,34 @@ const workItems = [
     size: "4 KB",
     modified: "2024-01-17",
   },
+  {
+    id: "certificates",
+    name: "Certificates",
+    type: "folder",
+    icon: "📁",
+    content: [
+      {
+        id: "cert1",
+        name: "Certificate1.pdf",
+        type: "file",
+        icon: "📜",
+        content: null,
+        size: "500 KB",
+        modified: "2024-01-10",
+      },
+      {
+        id: "cert2",
+        name: "Certificate2.pdf",
+        type: "file",
+        icon: "📜",
+        content: null,
+        size: "750 KB",
+        modified: "2024-01-12",
+      },
+    ],
+    size: "1.25 MB",
+    modified: "2024-01-12",
+  },
 ];
 
 interface DesktopItem {
@@ -82,6 +166,8 @@ interface DesktopItem {
   icon?: string;
   content: any;
   defaultPosition: { x: number; y: number };
+  size?: string;
+  modified?: string;
 }
 
 const desktopItems: DesktopItem[] = [
@@ -92,30 +178,38 @@ const desktopItems: DesktopItem[] = [
     icon: "📄",
     content: "# About Me\n\nWelcome to my portfolio!",
     defaultPosition: { x: 20, y: 20 },
+    size: "1 KB",
+    modified: "2024-01-24",
   },
   {
     id: "projects",
     label: "Projects",
     type: "folder",
     icon: "📁",
-    content: projectItems,
+    content: { items: projectItems },
     defaultPosition: { x: 120, y: 20 },
+    size: "10 KB",
+    modified: "2024-01-24",
   },
   {
     id: "playground",
     label: "Playground",
     type: "folder",
     icon: "📁",
-    content: playgroundItems,
+    content: { items: playgroundItems },
     defaultPosition: { x: 220, y: 20 },
+    size: "5 KB",
+    modified: "2024-01-24",
   },
   {
     id: "work",
     label: "Work",
     type: "folder",
     icon: "📁",
-    content: workItems,
+    content: { items: workItems },
     defaultPosition: { x: 320, y: 20 },
+    size: "8 KB",
+    modified: "2024-01-24",
   },
   {
     id: "whiteboard",
@@ -126,6 +220,18 @@ const desktopItems: DesktopItem[] = [
       data: "", // Initial empty whiteboard
     },
     defaultPosition: { x: 420, y: 20 },
+    size: "0 KB",
+    modified: "2024-01-24",
+  },
+  {
+    id: "devtools",
+    label: "DevTools",
+    type: "file",
+    icon: "🛠️",
+    content: null,
+    defaultPosition: { x: 520, y: 20 },
+    size: "0 KB",
+    modified: "2024-01-24",
   },
 ];
 
@@ -184,6 +290,24 @@ function Desktop() {
   };
 
   const handleItemOpen = (item: DesktopItem) => {
+    let appType = ApplicationType.TEXT;
+
+    switch (item.type) {
+      case "folder":
+        appType = ApplicationType.FOLDER;
+        break;
+      case "file":
+        if (item.id === "whiteboard") {
+          appType = ApplicationType.WHITEBOARD;
+        } else if (item.id === "devtools") {
+          appType = ApplicationType.DEVTOOLS;
+        }
+        break;
+      case "text":
+        appType = ApplicationType.TEXT;
+        break;
+    }
+
     dispatch({
       type: "OPEN_WINDOW",
       payload: {
@@ -192,6 +316,7 @@ function Desktop() {
             ? `folder-${item.label}`
             : `file-${item.label}`,
         title: item.label,
+        appType,
         content: item.content,
       },
     });
@@ -273,7 +398,7 @@ function Desktop() {
           onPositionChange={(position) =>
             handlePositionChange(item.id, position)
           }
-          onDoubleClick={() => handleItemOpen(item)}
+          onOpen={() => handleItemOpen(item)}
           onClick={(e) => handleIconClick(item.id, e)}
           isSelected={selectedItems.includes(item.id)}
         />

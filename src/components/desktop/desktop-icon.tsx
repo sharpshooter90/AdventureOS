@@ -22,6 +22,7 @@ export interface DesktopIconProps {
   defaultPosition: { x: number; y: number };
   onPositionChange: (position: { x: number; y: number }) => void;
   onClick?: (e: React.MouseEvent) => void;
+  onOpen?: () => void;
   isSelected?: boolean;
 }
 
@@ -43,6 +44,7 @@ export function DesktopIcon({
   defaultPosition,
   onPositionChange,
   onClick,
+  onOpen,
   isSelected = false,
 }: DesktopIconProps) {
   const { dispatch } = useWindowManager();
@@ -64,23 +66,6 @@ export function DesktopIcon({
     onPositionChange(newPosition);
   };
 
-  const handleDoubleClick = () => {
-    const appType =
-      type === "folder" ? "fileExplorer" : getApplicationForFile(label);
-    const title =
-      type === "folder" ? `${label} - File Explorer` : `${label} - ${appType}`;
-
-    dispatch({
-      type: "OPEN_WINDOW",
-      payload: {
-        id: `${type}-${id}`,
-        title,
-        appType,
-        content: type === "folder" ? { items: content } : content,
-      },
-    });
-  };
-
   return (
     <Draggable
       position={position}
@@ -92,7 +77,7 @@ export function DesktopIcon({
         className={`absolute flex flex-col items-center p-2 cursor-pointer select-none ${
           isDragging ? "opacity-50" : ""
         } ${isSelected ? "bg-blue-200" : ""}`}
-        onDoubleClick={handleDoubleClick}
+        onDoubleClick={onOpen}
         onClick={onClick}
       >
         <div className="text-2xl mb-1">

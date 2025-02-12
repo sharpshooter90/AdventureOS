@@ -1,5 +1,5 @@
 .desktop-background {
-  background-color: #008080; /* Classic Windows 95/98 teal background */
+  background-color: var(--desktop-bg);
   min-height: 100vh;
   width: 100%;
   position: relative;
@@ -10,8 +10,8 @@
 /* Selection box styling */
 .selection-box {
   position: absolute;
-  border: 1px solid #0066cc;
-  background-color: rgba(0, 102, 204, 0.1);
+  border: 1px solid var(--desktop-selection-border);
+  background-color: var(--desktop-selection-bg);
   pointer-events: none;
   z-index: 1000;
 }
@@ -39,16 +39,16 @@
 }
 
 .desktop-background::-webkit-scrollbar-track {
-  background: #c0c0c0;
+  background: var(--scrollbar-track);
 }
 
 .desktop-background::-webkit-scrollbar-thumb {
-  background: #808080;
-  border: 1px solid #404040;
+  background: var(--scrollbar-thumb);
+  border: 1px solid var(--scrollbar-border);
 }
 
 .desktop-background::-webkit-scrollbar-thumb:hover {
-  background: #666666;
+  background: var(--scrollbar-thumb-hover);
 }
 
 /* Context menu overlay prevention */
@@ -68,10 +68,5 @@
 }
 
 .desktop-icon.selected {
-  background-color: rgba(
-    59,
-    130,
-    246,
-    0.2
-  ); /* Light blue background for selected items */
+  background-color: var(--desktop-icon-selected);
 }
