@@ -27,6 +27,24 @@ export function RetroWindow({ window, isActive, onResize }: RetroWindowProps) {
   const [resizeEdge, setResizeEdge] = useState<string | null>(null);
   const [initialSize, setInitialSize] = useState({ width: 0, height: 0 });
   const [initialPosition, setInitialPosition] = useState({ x: 0, y: 0 });
+  const [wasMinimized, setWasMinimized] = useState(false);
+  const [isAnimating, setIsAnimating] = useState(false);
+
+  // Track minimized state changes
+  useEffect(() => {
+    if (window.isMinimized) {
+      setWasMinimized(true);
+      setIsAnimating(false);
+    }
+  }, [window.isMinimized]);
+
+  // Reset wasMinimized after animation completes
+  const handleAnimationEnd = () => {
+    if (wasMinimized) {
+      setWasMinimized(false);
+      setIsAnimating(true);
+    }
+  };
 
   const handleMouseDown = (e: React.MouseEvent) => {
     if (!window.isMaximized) {
@@ -176,10 +194,15 @@ export function RetroWindow({ window, isActive, onResize }: RetroWindowProps) {
   return (
     <div
       ref={windowRef}
-      className={`relative window-enter ${
-        window.isMaximized ? "w-full h-full" : "max-w-[90vw]"
+      className={`retro-window ${
+        wasMinimized
+          ? "window-enter from-minimized"
+          : isAnimating
+          ? ""
+          : "window-enter"
       }`}
       style={windowStyle}
+      onAnimationEnd={handleAnimationEnd}
     >
       {/* Shadow effect */}
       <div className="absolute -right-2 -bottom-2 w-full h-full bg-black" />
