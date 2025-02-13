@@ -13,6 +13,8 @@ export interface User {
   activeWindows: string[];
   lastSeen: number;
   customName?: string;
+  lastMessage?: string;
+  lastMessageTimestamp?: number;
 }
 
 export interface Message {

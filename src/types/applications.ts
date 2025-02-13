@@ -11,6 +11,8 @@ export enum ApplicationType {
   BROWSER = "BROWSER",
   CALCULATOR = "CALCULATOR",
   AUDIO_PLAYER = "AUDIO_PLAYER",
+  MULTIPLAYER_SETTINGS = "MULTIPLAYER_SETTINGS",
+  CUSTOM = "custom",
 }
 
 export interface ApplicationInfo {
@@ -64,7 +66,7 @@ export const ApplicationMap: Record<ApplicationType, ApplicationInfo> = {
   [ApplicationType.SETTINGS]: {
     name: "Settings",
     icon: "⚙️",
-    defaultSize: { width: 600, height: 400 },
+    defaultSize: { width: 500, height: 600 },
   },
   [ApplicationType.BROWSER]: {
     name: "Browser",
@@ -80,6 +82,17 @@ export const ApplicationMap: Record<ApplicationType, ApplicationInfo> = {
     name: "Audio Player",
     icon: "📻",
     defaultSize: { width: 350, height: 450 },
+  },
+  [ApplicationType.MULTIPLAYER_SETTINGS]: {
+    name: "Multiplayer Settings",
+    icon: "👥",
+    defaultSize: { width: 500, height: 600 },
+    title: "Multiplayer Settings",
+  },
+  [ApplicationType.CUSTOM]: {
+    name: "Custom Application",
+    icon: "🔧",
+    defaultSize: { width: 500, height: 600 },
   },
 };
 

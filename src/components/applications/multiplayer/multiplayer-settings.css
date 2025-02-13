@@ -1,0 +1,157 @@
+.multiplayer-settings {
+  padding: 2rem;
+  min-width: 400px;
+  max-width: 600px;
+  color: var(--text-primary);
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.toggle-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  background: rgba(0, 0, 0, 0.05);
+  border-radius: 8px;
+  margin-bottom: 1rem;
+}
+
+.toggle-container {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.toggle-label {
+  font-weight: 500;
+  font-size: 1.1em;
+}
+
+.ascii-art {
+  font-family: monospace;
+  white-space: pre;
+  text-align: center;
+  color: var(--text-primary);
+  font-size: 1.2em;
+  line-height: 1.2;
+  transition: all 0.3s ease;
+  padding: 1rem;
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.02);
+  letter-spacing: 0.1em;
+}
+
+.ascii-art.active {
+  background: rgba(0, 0, 0, 0.05);
+  animation: glow 2s infinite;
+  text-shadow: 0 0 2px rgba(0, 0, 0, 0.2);
+}
+
+/* Make emojis slightly larger for better visibility */
+.ascii-art .emoji {
+  font-size: 1.2em;
+}
+
+.settings-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.settings-content h2 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  text-align: center;
+}
+
+.feature-description {
+  background: rgba(0, 0, 0, 0.05);
+  padding: 1.5rem;
+  border-radius: 8px;
+  margin: 1rem 0;
+}
+
+.feature-description p {
+  margin-bottom: 1rem;
+  font-size: 1.1em;
+  line-height: 1.5;
+}
+
+.feature-description ul {
+  list-style: none;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+}
+
+.feature-description li {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9em;
+}
+
+.status-indicator {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9em;
+}
+
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: #666;
+  transition: all 0.3s ease;
+}
+
+.status-dot.active {
+  background-color: #4caf50;
+  box-shadow: 0 0 8px #4caf50;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(76, 175, 80, 0.4);
+  }
+  70% {
+    box-shadow: 0 0 0 6px rgba(76, 175, 80, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(76, 175, 80, 0);
+  }
+}
+
+@keyframes glow {
+  0% {
+    box-shadow: 0 0 5px rgba(76, 175, 80, 0.2);
+    transform: translateY(0);
+  }
+  50% {
+    box-shadow: 0 0 15px rgba(76, 175, 80, 0.4);
+    transform: translateY(-1px);
+  }
+  100% {
+    box-shadow: 0 0 5px rgba(76, 175, 80, 0.2);
+    transform: translateY(0);
+  }
+}
+
+/* Click animation */
+@keyframes click {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(0.9);
+  }
+  100% {
+    transform: scale(1);
+  }
+}

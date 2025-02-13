@@ -1,16 +1,12 @@
-import {
-  ApplicationType,
-  ApplicationMap,
-  getApplicationForFile,
-} from "../../types/applications";
+import { ApplicationType, ApplicationMap } from "../../types/applications";
 import { FileExplorer } from "./file-explorer/file-explorer";
 import { TextEditor } from "./text-editor/text-editor";
-import { WhiteboardViewer } from "./whiteboard/whiteboard-viewer";
 import { FolderContent } from "../content/folder-content";
 import { TextContent } from "../content/text-content";
 import { WhiteboardExcalidraw } from "../desktop/whiteboard-excalidraw";
 import { DevTools } from "./dev-tools/dev-tools";
 import { AudioPlayer } from "./audio-player/audio-player";
+import { MultiplayerSettings } from "./multiplayer/multiplayer-settings";
 
 interface AppWrapperProps {
   appType: ApplicationType;
@@ -48,6 +44,8 @@ export function AppWrapper({ appType, title, content }: AppWrapperProps) {
           onSave={content?.onSave}
         />
       );
+    case ApplicationType.MULTIPLAYER_SETTINGS:
+      return <MultiplayerSettings />;
     case ApplicationType.AUDIO_PLAYER:
       return <AudioPlayer />;
     default:

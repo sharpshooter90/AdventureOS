@@ -13,6 +13,7 @@ import {
 } from "../components/multiplayer";
 import { useAtom } from "jotai";
 import { Switch } from "../components/ui/switch";
+import { MultiplayerSettings } from "../components/applications/multiplayer/multiplayer-settings";
 
 // Sample content for files and folders
 const projectItems = [
@@ -185,6 +186,16 @@ const desktopItems: DesktopItem[] = [
     modified: "2024-01-24",
   },
   {
+    id: "multiplayer",
+    label: "Multiplayer",
+    type: "file",
+    icon: "👥",
+    content: null,
+    defaultPosition: { x: 120, y: 20 },
+    size: "0 KB",
+    modified: "2024-01-24",
+  },
+  {
     id: "projects",
     label: "Projects",
     type: "folder",
@@ -319,6 +330,8 @@ function Desktop() {
           appType = ApplicationType.DEVTOOLS;
         } else if (item.id === "audio-player") {
           appType = ApplicationType.AUDIO_PLAYER;
+        } else if (item.id === "multiplayer") {
+          appType = ApplicationType.MULTIPLAYER_SETTINGS;
         }
         break;
       case "text":
@@ -330,12 +343,13 @@ function Desktop() {
       type: "OPEN_WINDOW",
       payload: {
         id:
-          item.type === "folder"
-            ? `folder-${item.label}`
+          item.id === "multiplayer"
+            ? "multiplayer-settings"
             : `file-${item.label}`,
-        title: item.label,
+        title: item.id === "multiplayer" ? "Multiplayer Settings" : item.label,
         appType,
-        content: item.content,
+        content:
+          item.id === "multiplayer" ? <MultiplayerSettings /> : item.content,
       },
     });
   };
