@@ -4,18 +4,15 @@ import {
   useWindowManager,
 } from "../components/window/window-manager";
 import { DesktopIcon } from "../components/desktop/desktop-icon";
-import { Content } from "../components/content/about-content";
-import { FolderContent } from "../components/content/folder-content";
-import { WhiteboardExcalidraw } from "../components/desktop/whiteboard-excalidraw";
 import { useState, useEffect } from "react";
-import { getApplicationForFile, ApplicationType } from "../types/applications";
+import { ApplicationType } from "../types/applications";
 import "./desktop.css";
 import {
   MultiplayerProvider,
   isMultiplayerEnabledAtom,
 } from "../components/multiplayer";
 import { useAtom } from "jotai";
-import { Switch } from "@/components/ui/switch";
+import { Switch } from "../components/ui/switch";
 
 // Sample content for files and folders
 const projectItems = [

@@ -5,6 +5,7 @@ interface User {
   position: { x: number; y: number };
   activeWindows: string[];
   lastSeen: number;
+  customName?: string;
 }
 
 interface Message {
@@ -24,8 +25,9 @@ export default class AdventureServer implements Party.Server {
       let hasStaleUsers = false;
 
       for (const [id, user] of this.users.entries()) {
-        // Remove users that haven't been seen in 10 seconds
-        if (now - user.lastSeen > 10000) {
+        // Remove users that haven't been seen in 30 seconds
+        if (now - user.lastSeen > 30000) {
+          console.log("Removing stale user:", user);
           this.users.delete(id);
           hasStaleUsers = true;
         }
@@ -46,9 +48,13 @@ export default class AdventureServer implements Party.Server {
     // Check if user already exists
     const existingUser = this.users.get(userId);
     if (existingUser) {
-      // Update last seen timestamp
-      existingUser.lastSeen = Date.now();
-      this.users.set(userId, existingUser);
+      // Update last seen timestamp and maintain custom name
+      const updatedUser = {
+        ...existingUser,
+        lastSeen: Date.now(),
+      };
+      this.users.set(userId, updatedUser);
+      console.log("Updated existing user:", updatedUser);
     } else {
       // Create new user
       const user: User = {
@@ -58,6 +64,7 @@ export default class AdventureServer implements Party.Server {
         lastSeen: Date.now(),
       };
       this.users.set(userId, user);
+      console.log("Created new user:", user);
     }
 
     // Send current state to new user
@@ -95,6 +102,7 @@ export default class AdventureServer implements Party.Server {
             lastSeen: Date.now(),
           };
           this.users.set(userId, updatedUser);
+          console.log("Updated user state:", updatedUser);
 
           // Get unique users
           const uniqueUsers = Array.from(this.users.values());

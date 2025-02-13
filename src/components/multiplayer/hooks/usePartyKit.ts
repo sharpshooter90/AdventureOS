@@ -1,5 +1,10 @@
 import { useState, useEffect, useCallback } from "react";
-import { User, Message } from "../store/multiplayer-store";
+import {
+  User,
+  Message,
+  getUserSession,
+  updateUserPreferences,
+} from "../store/multiplayer-store";
 import { throttle } from "lodash";
 
 interface PartyConnection {
@@ -15,15 +20,49 @@ export const usePartyKit = (isMultiplayerEnabled: boolean) => {
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [error, setError] = useState<Error | null>(null);
   const [isConnected, setIsConnected] = useState(false);
+  const [lastPosition, setLastPosition] = useState<{ x: number; y: number }>({
+    x: 0,
+    y: 0,
+  });
+
+  // Clear all state when multiplayer is disabled
+  const clearState = useCallback(() => {
+    setConnection(null);
+    setUsers([]);
+    setCurrentUser(null);
+    setIsConnected(false);
+    setError(null);
+  }, []);
+
+  // Handle window focus/blur
+  useEffect(() => {
+    if (!isMultiplayerEnabled || !connection || !currentUser) return;
+
+    const handleFocus = () => {
+      console.log("Window focused, reconnecting...");
+      updateUserState({ position: lastPosition });
+    };
+
+    const handleBlur = () => {
+      console.log("Window blurred, maintaining connection...");
+      // We don't disconnect on blur anymore
+    };
+
+    window.addEventListener("focus", handleFocus);
+    window.addEventListener("blur", handleBlur);
+
+    return () => {
+      window.removeEventListener("focus", handleFocus);
+      window.removeEventListener("blur", handleBlur);
+    };
+  }, [isMultiplayerEnabled, connection, currentUser, lastPosition]);
 
   useEffect(() => {
     if (!isMultiplayerEnabled) {
       if (connection) {
+        console.log("Disconnecting from multiplayer...");
         connection.close();
-        setConnection(null);
-        setUsers([]);
-        setCurrentUser(null);
-        setIsConnected(false);
+        clearState();
       }
       return;
     }
@@ -56,7 +95,11 @@ export const usePartyKit = (isMultiplayerEnabled: boolean) => {
           console.log("Sending data:", data);
           conn.send(data);
         },
-        close: () => conn.close(),
+        close: () => {
+          console.log("Closing connection...");
+          conn.close();
+          clearState();
+        },
         addEventListener: (event: string, handler: (event: any) => void) => {
           if (event === "message") {
             conn.onmessage = (e) => {
@@ -74,20 +117,23 @@ export const usePartyKit = (isMultiplayerEnabled: boolean) => {
 
       setConnection(partyConnection);
 
-      // Send initial join message with a stable ID
-      const sessionId =
-        localStorage.getItem("sessionId") ||
-        Math.random().toString(36).substring(7);
-      localStorage.setItem("sessionId", sessionId);
+      // Use persistent session ID
+      const { sessionId, customName } = getUserSession();
+
+      const initialUser = {
+        id: sessionId,
+        position: { x: 0, y: 0 },
+        activeWindows: [],
+        lastSeen: Date.now(),
+        customName,
+      };
+
+      setCurrentUser(initialUser);
 
       partyConnection.send(
         JSON.stringify({
           type: "join",
-          user: {
-            id: sessionId,
-            position: { x: 0, y: 0 },
-            activeWindows: [],
-          },
+          user: initialUser,
         })
       );
     };
@@ -102,8 +148,7 @@ export const usePartyKit = (isMultiplayerEnabled: boolean) => {
     conn.onclose = () => {
       if (isCleanedUp) return;
       console.log("WebSocket connection closed");
-      setConnection(null);
-      setIsConnected(false);
+      clearState();
     };
 
     const messageHandler = (event: MessageEvent) => {
@@ -116,10 +161,11 @@ export const usePartyKit = (isMultiplayerEnabled: boolean) => {
           case "join":
             if (message.user) {
               console.log("User joined:", message.user);
-              setUsers((prev) => [...prev, message.user!]);
-              if (!currentUser) {
-                setCurrentUser(message.user);
-              }
+              setUsers((prev) => {
+                // Remove any existing user with the same ID
+                const filtered = prev.filter((u) => u.id !== message.user!.id);
+                return [...filtered, message.user!];
+              });
             }
             break;
           case "leave":
@@ -131,7 +177,19 @@ export const usePartyKit = (isMultiplayerEnabled: boolean) => {
           case "update":
             if (message.data?.users) {
               console.log("Users updated:", message.data.users);
-              setUsers(message.data.users);
+              // Filter out stale users and duplicates
+              const uniqueUsers = Array.from(
+                new Map(
+                  (message.data.users as User[])
+                    .filter((user) => {
+                      // Remove users that haven't been seen in 30 seconds
+                      const now = Date.now();
+                      return now - user.lastSeen < 30000;
+                    })
+                    .map((user) => [user.id, user])
+                ).values()
+              );
+              setUsers(uniqueUsers);
             }
             break;
         }
@@ -147,8 +205,9 @@ export const usePartyKit = (isMultiplayerEnabled: boolean) => {
       isCleanedUp = true;
       conn.removeEventListener("message", messageHandler);
       conn.close();
+      clearState();
     };
-  }, [isMultiplayerEnabled]);
+  }, [isMultiplayerEnabled, clearState]);
 
   const updateUserState = useCallback(
     (updates: Partial<User>) => {
@@ -157,7 +216,16 @@ export const usePartyKit = (isMultiplayerEnabled: boolean) => {
         return;
       }
 
-      const updatedUser = { ...currentUser, ...updates };
+      // Store position for focus/blur handling
+      if (updates.position) {
+        setLastPosition(updates.position);
+      }
+
+      const updatedUser = {
+        ...currentUser,
+        ...updates,
+        lastSeen: Date.now(),
+      };
       console.log("Updating user state:", updatedUser);
       setCurrentUser(updatedUser);
 
@@ -171,10 +239,21 @@ export const usePartyKit = (isMultiplayerEnabled: boolean) => {
     [connection, currentUser]
   );
 
+  const updateCustomName = useCallback(
+    (name: string) => {
+      updateUserPreferences({ customName: name });
+      if (currentUser) {
+        updateUserState({ customName: name });
+      }
+    },
+    [currentUser, updateUserState]
+  );
+
   return {
     users,
     currentUser,
     updateUserState,
+    updateCustomName,
     isConnected,
     error,
   };
