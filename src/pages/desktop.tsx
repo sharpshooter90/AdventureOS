@@ -10,6 +10,12 @@ import { WhiteboardExcalidraw } from "../components/desktop/whiteboard-excalidra
 import { useState, useEffect } from "react";
 import { getApplicationForFile, ApplicationType } from "../types/applications";
 import "./desktop.css";
+import {
+  MultiplayerProvider,
+  isMultiplayerEnabledAtom,
+} from "../components/multiplayer";
+import { useAtom } from "jotai";
+import { Switch } from "@/components/ui/switch";
 
 // Sample content for files and folders
 const projectItems = [
@@ -259,6 +265,9 @@ function Desktop() {
     start: { x: 0, y: 0 },
     current: { x: 0, y: 0 },
   });
+  const [isMultiplayerEnabled, setIsMultiplayerEnabled] = useAtom(
+    isMultiplayerEnabledAtom
+  );
 
   useEffect(() => {
     const savedPositions = localStorage.getItem("desktopIconPositions");
@@ -430,6 +439,12 @@ function Desktop() {
           }}
         />
       )}
+
+      <Switch
+        checked={isMultiplayerEnabled}
+        onCheckedChange={setIsMultiplayerEnabled}
+        id="multiplayer-mode"
+      />
     </div>
   );
 }
@@ -437,9 +452,11 @@ function Desktop() {
 export default function HomePage() {
   return (
     <WindowManagerProvider>
-      <PageLayout hideNav>
-        <Desktop />
-      </PageLayout>
+      <MultiplayerProvider>
+        <PageLayout hideNav>
+          <Desktop />
+        </PageLayout>
+      </MultiplayerProvider>
     </WindowManagerProvider>
   );
 }

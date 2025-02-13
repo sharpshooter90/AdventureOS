@@ -1,0 +1,52 @@
+.connected-users {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 9999;
+}
+
+.user-cursor {
+  position: fixed;
+  pointer-events: none;
+  transform-origin: center;
+  transition: transform 0.1s ease;
+  z-index: 9999;
+}
+
+.cursor-pointer {
+  font-size: 24px;
+  transform: rotate(-45deg);
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+}
+
+.cursor-pointer-animate {
+  animation: cursor-bounce 1s ease-in-out infinite;
+}
+
+.user-label {
+  position: absolute;
+  left: 20px;
+  top: 0;
+  white-space: nowrap;
+  transform: translateY(-100%);
+  margin-top: -8px;
+  padding: 4px 8px;
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  border-radius: 4px;
+  font-size: 12px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+@keyframes cursor-bounce {
+  0%,
+  100% {
+    transform: translateY(0) rotate(-45deg);
+  }
+  50% {
+    transform: translateY(-2px) rotate(-45deg);
+  }
+}
