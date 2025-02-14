@@ -90,31 +90,49 @@ export default class AdventureServer implements Party.Server {
   onMessage(message: string, sender: Party.Connection) {
     try {
       const msg = JSON.parse(message) as Message;
-      const userId = sender.id;
+      const connectionId = sender.id; // original connection id
 
-      if (msg.type === "update" && msg.user) {
-        const user = this.users.get(userId);
-        if (user) {
-          // Update user state
-          const updatedUser = {
-            ...msg.user,
-            id: userId, // Ensure we use the server's user ID
-            lastSeen: Date.now(),
-          };
-          this.users.set(userId, updatedUser);
-          console.log("Updated user state:", updatedUser);
-
-          // Get unique users
-          const uniqueUsers = Array.from(this.users.values());
-
-          // Broadcast position update to all users
-          this.party.broadcast(
-            JSON.stringify({
-              type: "update",
-              data: { users: uniqueUsers },
-            } as Message)
-          );
+      if (msg.type === "join" && msg.user) {
+        const persistentId = msg.user.id || connectionId;
+        // If a user exists with the connection id, rekey it
+        const existingUser = this.users.get(connectionId);
+        if (existingUser) {
+          this.users.delete(connectionId);
         }
+        // Create/Update the user using the persistentId
+        const updatedUser = {
+          ...msg.user,
+          id: persistentId,
+          lastSeen: Date.now(),
+        };
+        this.users.set(persistentId, updatedUser);
+        console.log("User joined updated:", updatedUser);
+        // Broadcast join to other connections
+        this.party.broadcast(
+          JSON.stringify({
+            type: "join",
+            user: updatedUser,
+          }),
+          [sender.id]
+        );
+      } else if (msg.type === "update" && msg.user) {
+        const persistentId = msg.user.id || connectionId;
+        const updatedUser = {
+          ...msg.user,
+          id: persistentId,
+          lastSeen: Date.now(),
+        };
+        this.users.set(persistentId, updatedUser);
+        console.log("Updated user state:", updatedUser);
+
+        // Get unique users and broadcast update
+        const uniqueUsers = Array.from(this.users.values());
+        this.party.broadcast(
+          JSON.stringify({
+            type: "update",
+            data: { users: uniqueUsers },
+          })
+        );
       }
     } catch (error) {
       console.error("Error processing message:", error);

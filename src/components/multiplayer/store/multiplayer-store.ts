@@ -26,16 +26,21 @@ export interface Message {
 // Helper functions for session management
 export const getUserSession = (): UserPreferences => {
   const stored = localStorage.getItem("userPreferences");
+  let session: UserPreferences;
   if (stored) {
-    return JSON.parse(stored);
+    session = JSON.parse(stored);
+  } else {
+    session = { sessionId: crypto.randomUUID() };
   }
 
-  // Create new session if none exists
-  const newSession: UserPreferences = {
-    sessionId: crypto.randomUUID(),
-  };
-  localStorage.setItem("userPreferences", JSON.stringify(newSession));
-  return newSession;
+  // Check if a user email exists in localStorage and if not already set in session
+  const email = localStorage.getItem("userEmail");
+  if (email && !session.customName) {
+    session.customName = email;
+    localStorage.setItem("userPreferences", JSON.stringify(session));
+  }
+
+  return session;
 };
 
 export const updateUserPreferences = (prefs: Partial<UserPreferences>) => {
