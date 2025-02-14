@@ -1,5 +1,6 @@
 import { useWindowManager } from "./window-manager";
 import { soundManager } from "../dialog/sound-manager";
+import { UserBar } from "../multiplayer/components/UserBar";
 
 export function Taskbar() {
   const { state, dispatch } = useWindowManager();
@@ -27,6 +28,9 @@ export function Taskbar() {
           {window.title}
         </button>
       ))}
+      <div className="ml-auto">
+        <UserBar />
+      </div>
     </div>
   );
 }
