@@ -1,10 +1,10 @@
 import { useAtom } from "jotai";
 import { isMultiplayerEnabledAtom } from "../store/multiplayer-store";
 import { usePartyKit } from "../hooks/usePartyKit";
-import { generateUserInfo } from "../utils/nameGenerator";
 import { useState, useEffect, useCallback, useRef } from "react";
 import "./CustomCursor.css";
 import { Portal } from "@radix-ui/react-portal";
+import CursorItem from "./CursorItem";
 
 interface ChatMessage {
   userId: string;
@@ -21,6 +21,7 @@ export const CustomCursor = () => {
   const chatInputRef = useRef<HTMLInputElement>(null);
   const currentUserRef = useRef<typeof currentUser | null>(null);
   const mousePositionRef = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
+  const [, forceUpdate] = useState({});
 
   // Handle keyboard shortcuts
   const handleKeyPress = useCallback(
@@ -69,6 +70,14 @@ export const CustomCursor = () => {
     currentUserRef.current = currentUser;
   }, [currentUser]);
 
+  useEffect(() => {
+    const interval = setInterval(() => {
+      forceUpdate({}); // Force re-render to update cursor states
+    }, 1000); // Update every second
+
+    return () => clearInterval(interval);
+  }, []);
+
   if (!isMultiplayerEnabled || !isConnected) {
     return null;
   }
@@ -81,68 +90,19 @@ export const CustomCursor = () => {
   return (
     <Portal>
       <div className="connected-users">
-        {uniqueUsers.map((user) => {
-          const userInfo = generateUserInfo(user.id);
-          return (
-            <div
-              key={`cursor-${user.id}`}
-              className="user-cursor"
-              style={{
-                transform: `translate(${user.position.x}px, ${user.position.y}px)`,
-              }}
-            >
-              <div className="cursor-pointer cursor-pointer-animate">
-                {user.id === currentUser?.id ? "↭" : "👆"}
-              </div>
-              <div className="user-label">
-                {user.id === currentUser?.id ? (
-                  isChatting ? (
-                    <form
-                      onSubmit={handleChatSubmit}
-                      className="chat-input-container"
-                    >
-                      <input
-                        ref={chatInputRef}
-                        type="text"
-                        value={chatMessage}
-                        onChange={(e) => setChatMessage(e.target.value)}
-                        placeholder="Type message..."
-                        className="chat-input"
-                        autoFocus
-                      />
-                      <div className="chat-hint">
-                        Press Enter to send, Esc to cancel
-                      </div>
-                    </form>
-                  ) : (
-                    <div>
-                      <span className="user-name">
-                        {(currentUser as any).message ||
-                          generateUserInfo(currentUser.id).name}
-                      </span>
-                      {currentUser.lastMessage && (
-                        <span className="user-last-message">
-                          {currentUser.lastMessage}
-                        </span>
-                      )}
-                    </div>
-                  )
-                ) : (
-                  <div>
-                    <span className="user-name">
-                      {(user as any).message || userInfo.name}
-                    </span>
-                    {user.lastMessage && (
-                      <span className="user-last-message">
-                        {user.lastMessage}
-                      </span>
-                    )}
-                  </div>
-                )}
-              </div>
-            </div>
-          );
-        })}
+        {uniqueUsers.map((user) => (
+          <CursorItem
+            key={`cursor-${user.id}`}
+            user={user}
+            users={uniqueUsers}
+            currentUser={currentUser}
+            isChatting={isChatting}
+            chatMessage={chatMessage}
+            chatInputRef={chatInputRef}
+            handleChatSubmit={handleChatSubmit}
+            setChatMessage={setChatMessage}
+          />
+        ))}
       </div>
     </Portal>
   );
