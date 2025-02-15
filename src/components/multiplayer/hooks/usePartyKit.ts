@@ -41,19 +41,24 @@ export const usePartyKit = (isMultiplayerEnabled: boolean) => {
 
   const updateUserState = useCallback(
     (updates: Partial<User>) => {
-      if (!connection || !currentUser) {
+      if (!connection || !currentUserRef.current) {
         console.log("Cannot update state: no connection or current user");
         return;
       }
 
-      // Store position for focus/blur handling
+      // Store position for focus/blur handling if provided
       if (updates.position) {
         setLastPosition(updates.position);
       }
 
+      const baseUser = currentUserRef.current;
+      // Determine the position: if updates.position is provided, use it; otherwise use the existing baseUser.position
+      const pos = updates.position ? updates.position : baseUser.position;
+
       const updatedUser = {
-        ...currentUser,
+        ...baseUser,
         ...updates,
+        position: pos,
         lastSeen: Date.now(),
       };
 
@@ -77,7 +82,7 @@ export const usePartyKit = (isMultiplayerEnabled: boolean) => {
         })
       );
     },
-    [connection, currentUser]
+    [connection]
   );
 
   useEffect(() => {
