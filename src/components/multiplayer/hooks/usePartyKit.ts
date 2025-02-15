@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import {
   User,
   Message,
@@ -25,6 +25,11 @@ export const usePartyKit = (isMultiplayerEnabled: boolean) => {
     y: 0,
   });
 
+  const currentUserRef = useRef<User | null>(currentUser);
+  useEffect(() => {
+    currentUserRef.current = currentUser;
+  }, [currentUser]);
+
   // Clear all state when multiplayer is disabled
   const clearState = useCallback(() => {
     setConnection(null);
@@ -34,7 +39,47 @@ export const usePartyKit = (isMultiplayerEnabled: boolean) => {
     setError(null);
   }, []);
 
-  // Handle window focus/blur
+  const updateUserState = useCallback(
+    (updates: Partial<User>) => {
+      if (!connection || !currentUser) {
+        console.log("Cannot update state: no connection or current user");
+        return;
+      }
+
+      // Store position for focus/blur handling
+      if (updates.position) {
+        setLastPosition(updates.position);
+      }
+
+      const updatedUser = {
+        ...currentUser,
+        ...updates,
+        lastSeen: Date.now(),
+      };
+
+      if (updates.lastMessage !== undefined) {
+        localStorage.setItem(
+          "userLastMessage",
+          JSON.stringify({
+            lastMessage: updates.lastMessage,
+            lastMessageTimestamp: updatedUser.lastMessageTimestamp,
+          })
+        );
+      }
+
+      console.log("Updating user state:", updatedUser);
+      setCurrentUser(updatedUser);
+
+      connection.send(
+        JSON.stringify({
+          type: "update",
+          user: updatedUser,
+        })
+      );
+    },
+    [connection, currentUser]
+  );
+
   useEffect(() => {
     if (!isMultiplayerEnabled || !connection || !currentUser) return;
 
@@ -45,7 +90,6 @@ export const usePartyKit = (isMultiplayerEnabled: boolean) => {
 
     const handleBlur = () => {
       console.log("Window blurred, maintaining connection...");
-      // We don't disconnect on blur anymore
     };
 
     window.addEventListener("focus", handleFocus);
@@ -55,7 +99,13 @@ export const usePartyKit = (isMultiplayerEnabled: boolean) => {
       window.removeEventListener("focus", handleFocus);
       window.removeEventListener("blur", handleBlur);
     };
-  }, [isMultiplayerEnabled, connection, currentUser, lastPosition]);
+  }, [
+    isMultiplayerEnabled,
+    connection,
+    currentUser,
+    lastPosition,
+    updateUserState,
+  ]);
 
   useEffect(() => {
     if (!isMultiplayerEnabled) {
@@ -120,12 +170,27 @@ export const usePartyKit = (isMultiplayerEnabled: boolean) => {
       // Use persistent session ID
       const { sessionId, customName } = getUserSession();
 
+      const storedLastMessage = localStorage.getItem("userLastMessage");
+      let lastMessage: string | undefined;
+      let lastMessageTimestamp: number | undefined;
+      if (storedLastMessage) {
+        try {
+          const parsed = JSON.parse(storedLastMessage);
+          lastMessage = parsed.lastMessage;
+          lastMessageTimestamp = parsed.lastMessageTimestamp;
+        } catch (e) {
+          console.error("Failed to parse stored last message:", e);
+        }
+      }
+
       const initialUser = {
         id: sessionId,
         position: { x: 0, y: 0 },
         activeWindows: [],
         lastSeen: Date.now(),
         customName,
+        lastMessage,
+        lastMessageTimestamp,
       };
 
       setCurrentUser(initialUser);
@@ -190,6 +255,30 @@ export const usePartyKit = (isMultiplayerEnabled: boolean) => {
                 ).values()
               );
               setUsers(uniqueUsers);
+
+              // NEW: Update currentUser state and localStorage if there's a new lastMessage or timestamp
+              if (currentUserRef.current) {
+                const updatedCurrentUser = uniqueUsers.find(
+                  (u) => u.id === currentUserRef.current!.id
+                );
+                if (
+                  updatedCurrentUser &&
+                  (updatedCurrentUser.lastMessage !==
+                    currentUserRef.current.lastMessage ||
+                    updatedCurrentUser.lastMessageTimestamp !==
+                      currentUserRef.current.lastMessageTimestamp)
+                ) {
+                  setCurrentUser(updatedCurrentUser);
+                  localStorage.setItem(
+                    "userLastMessage",
+                    JSON.stringify({
+                      lastMessage: updatedCurrentUser.lastMessage,
+                      lastMessageTimestamp:
+                        updatedCurrentUser.lastMessageTimestamp,
+                    })
+                  );
+                }
+              }
             }
             break;
         }
@@ -209,36 +298,6 @@ export const usePartyKit = (isMultiplayerEnabled: boolean) => {
     };
   }, [isMultiplayerEnabled, clearState]);
 
-  const updateUserState = useCallback(
-    (updates: Partial<User>) => {
-      if (!connection || !currentUser) {
-        console.log("Cannot update state: no connection or current user");
-        return;
-      }
-
-      // Store position for focus/blur handling
-      if (updates.position) {
-        setLastPosition(updates.position);
-      }
-
-      const updatedUser = {
-        ...currentUser,
-        ...updates,
-        lastSeen: Date.now(),
-      };
-      console.log("Updating user state:", updatedUser);
-      setCurrentUser(updatedUser);
-
-      connection.send(
-        JSON.stringify({
-          type: "update",
-          user: updatedUser,
-        })
-      );
-    },
-    [connection, currentUser]
-  );
-
   const updateCustomName = useCallback(
     (name: string) => {
       updateUserPreferences({ customName: name });
@@ -248,6 +307,31 @@ export const usePartyKit = (isMultiplayerEnabled: boolean) => {
     },
     [currentUser, updateUserState]
   );
+
+  useEffect(() => {
+    const handleStorage = (e: StorageEvent) => {
+      if (e.key === "userLastMessage" && e.newValue) {
+        try {
+          const parsed = JSON.parse(e.newValue);
+          // Use currentUserRef to get the latest value
+          if (
+            currentUserRef.current &&
+            currentUserRef.current.lastMessage !== parsed.lastMessage
+          ) {
+            setCurrentUser({
+              ...currentUserRef.current,
+              lastMessage: parsed.lastMessage,
+              lastMessageTimestamp: parsed.lastMessageTimestamp,
+            });
+          }
+        } catch (err) {
+          console.error("Error parsing userLastMessage from storage", err);
+        }
+      }
+    };
+    window.addEventListener("storage", handleStorage);
+    return () => window.removeEventListener("storage", handleStorage);
+  }, []);
 
   return {
     users,

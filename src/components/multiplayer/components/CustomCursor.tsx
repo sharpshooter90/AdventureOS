@@ -17,7 +17,6 @@ export const CustomCursor = () => {
     usePartyKit(isMultiplayerEnabled);
   const [isChatting, setIsChatting] = useState(false);
   const [chatMessage, setChatMessage] = useState("");
-  const [messages, setMessages] = useState<ChatMessage[]>([]);
   const chatInputRef = useRef<HTMLInputElement>(null);
 
   // Handle keyboard shortcuts
@@ -39,13 +38,8 @@ export const CustomCursor = () => {
   const handleChatSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (chatMessage.trim() && currentUser) {
-      const newMessage: ChatMessage = {
-        userId: currentUser.id,
-        text: chatMessage,
-        timestamp: Date.now(),
-      };
-      setMessages((prev) => [...prev, newMessage]);
       updateUserState({
+        ...currentUser,
         lastMessage: chatMessage,
         lastMessageTimestamp: Date.now(),
       });
@@ -54,26 +48,16 @@ export const CustomCursor = () => {
     }
   };
 
-  // Clean up old messages
-  useEffect(() => {
-    const cleanup = setInterval(() => {
-      const now = Date.now();
-      setMessages((prev) => prev.filter((msg) => now - msg.timestamp < 5000));
-    }, 1000);
-
-    return () => clearInterval(cleanup);
-  }, []);
-
   useEffect(() => {
     window.addEventListener("keydown", handleKeyPress);
     return () => window.removeEventListener("keydown", handleKeyPress);
   }, [handleKeyPress]);
 
-  if (!isMultiplayerEnabled || !isConnected || users.length === 0) {
+  if (!isMultiplayerEnabled || !isConnected) {
     return null;
   }
 
-  // Remove duplicate users and ensure unique entries
+  // Ensure unique users
   const uniqueUsers = Array.from(
     new Map(users.map((user) => [user.id, user])).values()
   );
@@ -81,12 +65,7 @@ export const CustomCursor = () => {
   return (
     <div className="connected-users">
       {uniqueUsers.map((user) => {
-        if (user.id === currentUser?.id) return null;
         const userInfo = generateUserInfo(user.id);
-        const userMessage = messages.find((m) => m.userId === user.id);
-        const showMessage =
-          userMessage && Date.now() - userMessage.timestamp < 5000;
-
         return (
           <div
             key={`cursor-${user.id}`}
@@ -97,45 +76,54 @@ export const CustomCursor = () => {
           >
             <div className="cursor-pointer cursor-pointer-animate">👆</div>
             <div className="user-label">
-              <span className="user-name">
-                {user.customName || userInfo.name}
-              </span>
-              {showMessage && (
-                <div className="user-chat-bubble">{userMessage.text}</div>
+              {user.id === currentUser?.id ? (
+                isChatting ? (
+                  <form
+                    onSubmit={handleChatSubmit}
+                    className="chat-input-container"
+                  >
+                    <input
+                      ref={chatInputRef}
+                      type="text"
+                      value={chatMessage}
+                      onChange={(e) => setChatMessage(e.target.value)}
+                      placeholder="Type message..."
+                      className="chat-input"
+                      autoFocus
+                    />
+                    <div className="chat-hint">
+                      Press Enter to send, Esc to cancel
+                    </div>
+                  </form>
+                ) : (
+                  <div>
+                    <span className="user-name">
+                      {(currentUser as any).message ||
+                        generateUserInfo(currentUser.id).name}
+                    </span>
+                    {currentUser.lastMessage && (
+                      <span className="user-last-message">
+                        {currentUser.lastMessage}
+                      </span>
+                    )}
+                  </div>
+                )
+              ) : (
+                <div>
+                  <span className="user-name">
+                    {(user as any).message || userInfo.name}
+                  </span>
+                  {user.lastMessage && (
+                    <span className="user-last-message">
+                      {user.lastMessage}
+                    </span>
+                  )}
+                </div>
               )}
             </div>
           </div>
         );
       })}
-
-      {isChatting && currentUser && (
-        <div
-          className="user-cursor"
-          style={{
-            transform: `translate(${currentUser.position.x}px, ${currentUser.position.y}px)`,
-          }}
-        >
-          <div className="cursor-pointer cursor-pointer-animate">👆</div>
-          <div className="user-label">
-            <span className="user-name">
-              {currentUser.customName || generateUserInfo(currentUser.id).name}
-            </span>
-            <form onSubmit={handleChatSubmit} className="chat-input-container">
-              <input
-                ref={chatInputRef}
-                type="text"
-                value={chatMessage}
-                onChange={(e) => setChatMessage(e.target.value)}
-                placeholder="Type message..."
-                className="chat-input"
-              />
-              <div className="chat-hint">
-                Press Enter to send, Esc to cancel
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
     </div>
   );
 };
