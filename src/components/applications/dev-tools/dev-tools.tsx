@@ -4,6 +4,8 @@ import { Button } from "../../ui/button";
 import { Label } from "../../ui/label";
 import { Input } from "../../ui/input";
 import { useState, useEffect } from "react";
+import { Switch } from "../../ui/switch";
+import { useWindowManager } from "../../window/window-manager";
 
 interface ColorToken {
   name: string;
@@ -31,6 +33,7 @@ export function DevTools() {
   const [soundMappings, setSoundMappings] = useState<SoundMapping[]>([]);
   const [showFPS, setShowFPS] = useState(false);
   const [localStorage, setLocalStorage] = useState<Record<string, string>>({});
+  const { state: windowState, dispatch: windowDispatch } = useWindowManager();
 
   useEffect(() => {
     loadColorTokens();
@@ -301,8 +304,80 @@ export function DevTools() {
           className="h-[calc(100%-60px)] overflow-auto"
         >
           <Card className="p-4">
-            <h3 className="text-lg font-semibold mb-4">Component Analysis</h3>
-            {/* TODO: Implement component tree visualization */}
+            <h3 className="text-lg font-semibold mb-4">Window Management</h3>
+            <div className="space-y-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <Label className="text-base">Tile Manager</Label>
+                  <p className="text-sm text-gray-500">
+                    Toggle between free-form and tiled window management
+                  </p>
+                </div>
+                <Switch
+                  checked={windowState.tileManagerEnabled}
+                  onCheckedChange={(checked) => {
+                    windowDispatch({
+                      type: "TOGGLE_TILE_MANAGER",
+                      payload: { enabled: checked },
+                    });
+                  }}
+                />
+              </div>
+
+              {windowState.tileManagerEnabled && (
+                <div className="space-y-4">
+                  <h4 className="font-medium text-sm text-gray-500">
+                    Current Layout: {windowState.tileLayout || "None"}
+                  </h4>
+                  <div className="grid grid-cols-2 gap-4">
+                    <Button
+                      variant="outline"
+                      onClick={() =>
+                        windowDispatch({
+                          type: "SET_TILE_LAYOUT",
+                          payload: { layout: "vertical" },
+                        })
+                      }
+                    >
+                      Vertical
+                    </Button>
+                    <Button
+                      variant="outline"
+                      onClick={() =>
+                        windowDispatch({
+                          type: "SET_TILE_LAYOUT",
+                          payload: { layout: "horizontal" },
+                        })
+                      }
+                    >
+                      Horizontal
+                    </Button>
+                    <Button
+                      variant="outline"
+                      onClick={() =>
+                        windowDispatch({
+                          type: "SET_TILE_LAYOUT",
+                          payload: { layout: "grid" },
+                        })
+                      }
+                    >
+                      Grid
+                    </Button>
+                    <Button
+                      variant="outline"
+                      onClick={() =>
+                        windowDispatch({
+                          type: "SET_TILE_LAYOUT",
+                          payload: { layout: "masterDetail" },
+                        })
+                      }
+                    >
+                      Master-Detail
+                    </Button>
+                  </div>
+                </div>
+              )}
+            </div>
           </Card>
         </TabsContent>
 
